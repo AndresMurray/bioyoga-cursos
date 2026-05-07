@@ -5,6 +5,7 @@ import { useLocations } from '@/hooks/useLocations';
 import { api } from '@/lib/api';
 import { validateField } from '@/utils/validations';
 import Link from 'next/link';
+import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
 
 export default function RegisterPage() {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -114,6 +115,7 @@ export default function RegisterPage() {
 
   return (
     <div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '2rem 1rem' }}>
+      <RedirectIfLoggedIn />
       <div className="form-container" style={{ width: '100%', maxWidth: '800px', padding: '3rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '2rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>

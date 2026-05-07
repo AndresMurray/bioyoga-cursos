@@ -1,5 +1,10 @@
 import ClientDashboard from "./ClientDashboard";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 export default function Page() {
-  return <ClientDashboard />;
+  return (
+    <ProtectedRoute>
+      <ClientDashboard />
+    </ProtectedRoute>
+  );
 }

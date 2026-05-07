@@ -44,7 +44,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     try {
       const response = await api.post('/auth/login', { email: formData.email, password: formData.password });
       localStorage.setItem('token', response.access_token);
-      window.location.href = response.is_admin ? '/admin' : '/client';
+      
+      // Fetch user profile to know if they are an admin
+      const user = await api.get('/auth/me');
+      window.location.href = user.is_admin ? '/admin' : '/client';
     } catch (err: any) {
       setErrorMsg(err.message || 'Ocurrió un error inesperado al iniciar sesión.');
     } finally {

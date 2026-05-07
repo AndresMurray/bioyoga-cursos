@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from database.session import get_db
 from models.schemas import UserCreate, UserResponse, LoginRequest, Token
 from services.auth_service import AuthService
+from dependencies import get_current_user, require_admin
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -43,3 +44,17 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=error)
 
     return token_data
+
+@router.get("/me", response_model=UserResponse)
+async def read_users_me(current_user = Depends(get_current_user)):
+    """
+    Ruta protegida: Obtiene los datos del usuario actual (requiere token JWT).
+    """
+    return current_user
+
+@router.get("/admin-data")
+async def read_admin_data(current_user = Depends(require_admin)):
+    """
+    Ruta protegida para admins: Solo accesible si el usuario es administrador.
+    """
+    return {"message": "Bienvenido al panel de administrador", "admin_email": current_user.email}

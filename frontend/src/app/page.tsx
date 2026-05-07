@@ -1,5 +1,6 @@
 import React from 'react';
 import CourseCard from '@/components/courses/CourseCard';
+import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
 
 export default function Home() {
   const courses = [
@@ -25,6 +26,7 @@ export default function Home() {
 
   return (
     <div className="animate-fade">
+      <RedirectIfLoggedIn />
       {/* Hero Section / Presentation */}
       <section id="sobre-mi" style={{ 
         padding: '6rem 0', 
