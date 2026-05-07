@@ -1,5 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from database.session import engine, Base
+from models import user # Import to register models
+from routes import auth
+
+# Create tables
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Centra Kinesiología - Gestión de Cursos API")
 
@@ -11,6 +17,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth.router)
 
 @app.get("/")
 async def root():

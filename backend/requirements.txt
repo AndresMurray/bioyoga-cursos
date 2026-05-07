@@ -1,6 +1,6 @@
 fastapi
 uvicorn[standard]
-pydantic
+pydantic[email]
 pydantic-settings
 sqlalchemy
 psycopg2-binary
@@ -8,4 +8,5 @@ python-dotenv
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
-cors
+bcrypt==4.0.1
+httpx

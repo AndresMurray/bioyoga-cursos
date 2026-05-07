@@ -4,7 +4,8 @@ export const api = {
   async get(endpoint: string) {
     const response = await fetch(`${API_URL}${endpoint}`);
     if (!response.ok) {
-      throw new Error(`Error fetching ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.detail || `Error: ${response.statusText}`);
     }
     return response.json();
   },
@@ -18,7 +19,8 @@ export const api = {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      throw new Error(`Error posting to ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.detail || `Error: ${response.statusText}`);
     }
     return response.json();
   },
@@ -32,7 +34,8 @@ export const api = {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      throw new Error(`Error updating ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.detail || `Error: ${response.statusText}`);
     }
     return response.json();
   },
@@ -42,7 +45,8 @@ export const api = {
       method: 'DELETE',
     });
     if (!response.ok) {
-      throw new Error(`Error deleting ${endpoint}: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.detail || `Error: ${response.statusText}`);
     }
     return response.json();
   },
