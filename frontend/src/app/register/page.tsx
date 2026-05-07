@@ -6,6 +6,10 @@ import { api } from '@/lib/api';
 import { validateField } from '@/utils/validations';
 import Link from 'next/link';
 import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { cn } from '@/utils/cn';
 
 export default function RegisterPage() {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -79,184 +83,142 @@ export default function RegisterPage() {
     }
   };
 
-  const EyeButton = () => (
-    <button
-      type="button"
-      onClick={() => setShowPassword(v => !v)}
-      className="eye-btn"
-      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-    >
-      {showPassword ? '🙈' : '👁️'}
-    </button>
-  );
-
   if (isSuccess) {
     return (
-      <div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="form-container" style={{ textAlign: 'center', padding: '3rem' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📧</div>
-          <h2 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>¡Registro casi listo!</h2>
-          <p style={{ color: 'var(--muted-foreground)' }}>
+      <div className="min-h-[80vh] flex justify-center items-center p-4">
+        <Card className="max-w-md w-full text-center p-8 animate-fade shadow-xl">
+          <div className="text-6xl mb-6">📧</div>
+          <h2 className="text-3xl font-bold text-primary mb-4">¡Registro casi listo!</h2>
+          <p className="text-muted-foreground mb-8 leading-relaxed">
             Hemos enviado un mail a <strong>{formData.email}</strong>.<br />
             Por favor revisá tu bandeja de entrada para validar tu cuenta e ingresar.
           </p>
-          <Link href="/" style={{
-            display: 'inline-block',
-            marginTop: '2rem', padding: '1rem 2rem',
-            borderRadius: 'var(--radius)', backgroundColor: 'var(--primary)',
-            color: 'white', fontWeight: 600,
-          }}>
-            Volver al inicio
+          <Link href="/">
+            <Button size="lg" className="w-full">
+              Volver al inicio
+            </Button>
           </Link>
-        </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '2rem 1rem' }}>
+    <div className="min-h-[80vh] flex justify-center items-center py-16 px-4 bg-background">
       <RedirectIfLoggedIn />
-      <div className="form-container" style={{ width: '100%', maxWidth: '800px', padding: '3rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '2rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>
-            Crea tu cuenta
-          </h2>
-          <p style={{ color: 'var(--muted-foreground)' }}>
-            Completá tus datos para registrarte en Centra
-          </p>
-        </div>
-
-        {errorMsg && (
-          <div className="form-global-error">
-            {errorMsg}
+      <Card className="w-full max-w-3xl shadow-xl animate-fade">
+        <CardContent className="p-8 md:p-12">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-primary mb-2">Crea tu cuenta</h2>
+            <p className="text-muted-foreground">Completá tus datos para registrarte en Centra</p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-            
-            {/* Nombre */}
-            <div className="form-group">
-              <label className="form-label">Nombre</label>
-              <input name="first_name" required value={formData.first_name} onChange={handleChange} className="form-input" />
-              {fieldErrors.first_name && <span className="form-error">{fieldErrors.first_name}</span>}
+          {errorMsg && (
+            <div className="mb-8 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center font-medium">
+              {errorMsg}
             </div>
+          )}
 
-            {/* Apellido */}
-            <div className="form-group">
-              <label className="form-label">Apellido</label>
-              <input name="last_name" required value={formData.last_name} onChange={handleChange} className="form-input" />
-              {fieldErrors.last_name && <span className="form-error">{fieldErrors.last_name}</span>}
-            </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input label="Nombre" name="first_name" required value={formData.first_name} onChange={handleChange} error={fieldErrors.first_name} />
+              <Input label="Apellido" name="last_name" required value={formData.last_name} onChange={handleChange} error={fieldErrors.last_name} />
+              <Input label="DNI" name="dni" required value={formData.dni} inputMode="numeric" onChange={handleChange} error={fieldErrors.dni} />
+              <Input label="Fecha de Nacimiento" type="date" name="birth_date" required value={formData.birth_date} onChange={handleChange} />
+              <Input label="Celular" name="phone" required value={formData.phone} inputMode="tel" onChange={handleChange} />
+              
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-sm font-medium text-foreground">País</label>
+                <select 
+                  name="country" 
+                  required 
+                  value={formData.country} 
+                  onChange={handleCountryChange} 
+                  className="flex h-10 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:border-primary disabled:opacity-50"
+                >
+                  <option value="">Selecciona un país</option>
+                  {countries.map(c => <option key={c.apiName} value={c.apiName}>{c.name}</option>)}
+                </select>
+              </div>
 
-            {/* DNI */}
-            <div className="form-group">
-              <label className="form-label">DNI</label>
-              <input name="dni" required value={formData.dni} inputMode="numeric" onChange={handleChange} className="form-input" />
-              {fieldErrors.dni && <span className="form-error">{fieldErrors.dni}</span>}
-            </div>
-
-            {/* Fecha de Nacimiento */}
-            <div className="form-group">
-              <label className="form-label">Fecha de Nacimiento</label>
-              <input type="date" name="birth_date" required value={formData.birth_date} onChange={handleChange} className="form-input" />
-            </div>
-
-            {/* Celular */}
-            <div className="form-group">
-              <label className="form-label">Celular</label>
-              <input name="phone" required value={formData.phone} inputMode="tel" onChange={handleChange} className="form-input" />
-            </div>
-
-            {/* País */}
-            <div className="form-group">
-              <label className="form-label">País</label>
-              <select name="country" required value={formData.country} onChange={handleCountryChange} className="form-input">
-                <option value="">Selecciona un país</option>
-                {countries.map(c => <option key={c.apiName} value={c.apiName}>{c.name}</option>)}
-              </select>
-            </div>
-
-            {/* Provincia */}
-            <div className="form-group">
-              <label className="form-label">Provincia / Estado</label>
-              <input
-                name="province"
-                list="province-list"
-                required
-                disabled={!formData.country}
-                value={formData.province}
-                onChange={handleProvinceChange}
-                placeholder={loadingLocations.provinces ? 'Cargando...' : 'Escribí o seleccioná'}
-                className="form-input"
-              />
-              <datalist id="province-list">
-                {provinces.map(p => <option key={p.apiName} value={p.apiName}>{p.name}</option>)}
-              </datalist>
-            </div>
-
-            {/* Ciudad */}
-            <div className="form-group">
-              <label className="form-label">Ciudad</label>
-              <input
-                name="city"
-                list="city-list"
-                required
-                disabled={!formData.province}
-                value={formData.city}
-                onChange={handleChange}
-                placeholder={loadingLocations.cities ? 'Cargando...' : 'Escribí o seleccioná'}
-                className="form-input"
-              />
-              <datalist id="city-list">
-                {cities.map(city => <option key={city} value={city}>{city}</option>)}
-              </datalist>
-            </div>
-
-            {/* Email — spans full width */}
-            <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Email</label>
-              <input type="email" name="email" required value={formData.email} onChange={handleChange} className="form-input" />
-              {fieldErrors.email && <span className="form-error">{fieldErrors.email}</span>}
-            </div>
-
-            {/* Contraseña — spans full width */}
-            <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Contraseña</label>
-              <div className="password-wrapper">
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-sm font-medium text-foreground">Provincia / Estado</label>
                 <input
+                  name="province"
+                  list="province-list"
+                  required
+                  disabled={!formData.country}
+                  value={formData.province}
+                  onChange={handleProvinceChange}
+                  placeholder={loadingLocations.provinces ? 'Cargando...' : 'Escribí o seleccioná'}
+                  className={cn(
+                    "flex h-10 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:border-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                    !formData.country && "bg-muted"
+                  )}
+                />
+                <datalist id="province-list">
+                  {provinces.map(p => <option key={p.apiName} value={p.apiName}>{p.name}</option>)}
+                </datalist>
+              </div>
+
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-sm font-medium text-foreground">Ciudad</label>
+                <input
+                  name="city"
+                  list="city-list"
+                  required
+                  disabled={!formData.province}
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder={loadingLocations.cities ? 'Cargando...' : 'Escribí o seleccioná'}
+                  className={cn(
+                    "flex h-10 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:border-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                    !formData.province && "bg-muted"
+                  )}
+                />
+                <datalist id="city-list">
+                  {cities.map(city => <option key={city} value={city}>{city}</option>)}
+                </datalist>
+              </div>
+
+              <div className="md:col-span-2">
+                <Input label="Email" type="email" name="email" required value={formData.email} onChange={handleChange} error={fieldErrors.email} />
+              </div>
+
+              <div className="md:col-span-2 relative">
+                <Input 
+                  label="Contraseña"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   required
                   minLength={6}
                   value={formData.password}
                   onChange={handleChange}
-                  className="form-input"
-                  style={{ paddingRight: '2.5rem' }}
+                  error={fieldErrors.password}
                 />
-                <EyeButton />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3 top-9 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
               </div>
-              {fieldErrors.password && <span className="form-error">{fieldErrors.password}</span>}
             </div>
 
+            <Button type="submit" size="lg" disabled={isLoading} className="w-full mt-6 text-lg">
+              {isLoading ? 'Registrando...' : 'Crear Cuenta'}
+            </Button>
+          </form>
+
+          <div className="mt-8 text-center text-sm">
+            <span className="text-muted-foreground">¿Ya tenés cuenta?</span>
+            <Link href="/" className="ml-2 font-semibold text-primary underline hover:text-primary/80 transition-colors">
+              Ir al inicio para iniciar sesión
+            </Link>
           </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="form-submit-btn"
-          >
-            {isLoading ? 'Registrando...' : 'Crear Cuenta'}
-          </button>
-        </form>
-
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <span style={{ color: 'var(--muted-foreground)' }}>¿Ya tenés cuenta?</span>
-          <Link href="/" style={{ color: 'var(--primary)', fontWeight: 600, marginLeft: '0.5rem', textDecoration: 'underline' }}>
-            Ir al inicio para iniciar sesión
-          </Link>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

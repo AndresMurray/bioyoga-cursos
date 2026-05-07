@@ -1,6 +1,8 @@
 import React from 'react';
 import CourseCard from '@/components/courses/CourseCard';
 import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
+import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
 
 export default function Home() {
   const courses = [
@@ -27,82 +29,41 @@ export default function Home() {
   return (
     <div className="animate-fade">
       <RedirectIfLoggedIn />
+      
       {/* Hero Section / Presentation */}
-      <section id="sobre-mi" style={{ 
-        padding: '6rem 0', 
-        backgroundColor: 'var(--background)',
-        display: 'flex',
-        alignItems: 'center',
-        minHeight: '80vh'
-      }}>
-        <div className="container" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '4rem',
-          alignItems: 'center'
-        }}>
-          <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute',
-              top: '-20px',
-              left: '-20px',
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'var(--accent)',
-              borderRadius: 'var(--radius)',
-              zIndex: -1
-            }}></div>
+      <section id="sobre-mi" className="py-24 bg-background min-h-[80vh] flex items-center">
+        <div className="container grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="relative">
+            <div className="absolute -inset-4 bg-accent rounded-2xl -z-10 transform -rotate-2"></div>
             <img 
               src="/images/kinesiologist.png" 
               alt="Kinesióloga" 
-              style={{
-                width: '100%',
-                borderRadius: 'var(--radius)',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                display: 'block'
-              }}
+              className="w-full rounded-xl shadow-2xl block"
             />
           </div>
           <div>
-            <span style={{ 
-              color: 'var(--primary)', 
-              fontWeight: 600, 
-              textTransform: 'uppercase', 
-              letterSpacing: '2px',
-              fontSize: '0.9rem',
-              display: 'block',
-              marginBottom: '1rem'
-            }}>
+            <span className="text-primary font-semibold uppercase tracking-[0.2em] text-sm block mb-4">
               Sobre Mí
             </span>
-            <h1 style={{ fontSize: '3rem', lineHeight: '1.1', marginBottom: '1.5rem' }}>
+            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground">
               Pasión por el movimiento y la salud
             </h1>
-            <p style={{ fontSize: '1.1rem', color: 'var(--muted-foreground)', marginBottom: '2rem' }}>
+            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
               Hola, soy Lic. en Kinesiología. Mi objetivo es ayudarte a recuperar tu bienestar a través de técnicas innovadoras y un trato cercano y profesional.
             </p>
-            <p style={{ fontSize: '1.1rem', color: 'var(--muted-foreground)', marginBottom: '2.5rem' }}>
+            <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
               En este espacio no solo brindo atención personalizada, sino que también comparto mis conocimientos a través de cursos especializados para profesionales y estudiantes del área.
             </p>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
-              <a href="#cursos" style={{
-                padding: '1rem 2rem',
-                borderRadius: 'var(--radius)',
-                backgroundColor: 'var(--primary)',
-                color: 'white',
-                fontWeight: 600,
-                boxShadow: '0 4px 14px 0 rgba(248, 180, 166, 0.39)'
-              }}>
-                Ver Cursos
+            <div className="flex flex-wrap gap-4">
+              <a href="#cursos">
+                <Button size="lg" className="shadow-lg shadow-primary/30 text-base px-8">
+                  Ver Cursos
+                </Button>
               </a>
-              <a href="#" style={{
-                padding: '1rem 2rem',
-                borderRadius: 'var(--radius)',
-                backgroundColor: 'white',
-                border: '1px solid var(--border)',
-                fontWeight: 600
-              }}>
-                Contactar
+              <a href="#">
+                <Button variant="outline" size="lg" className="text-base px-8">
+                  Contactar
+                </Button>
               </a>
             </div>
           </div>
@@ -110,20 +71,16 @@ export default function Home() {
       </section>
 
       {/* Courses Section */}
-      <section id="cursos" style={{ padding: '6rem 0', backgroundColor: 'white' }}>
+      <section id="cursos" className="py-24 bg-white">
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Nuestros Cursos</h2>
-            <p style={{ color: 'var(--muted-foreground)', maxWidth: '600px', margin: '0 auto' }}>
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Nuestros Cursos</h2>
+            <p className="text-lg text-muted-foreground">
               Capacitaciones diseñadas para potenciar tu carrera profesional con las últimas tendencias en kinesiología y fisiatría.
             </p>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '2.5rem'
-          }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {courses.map((course, index) => (
               <CourseCard 
                 key={index}
@@ -138,31 +95,23 @@ export default function Home() {
       </section>
 
       {/* Call to action */}
-      <section style={{ padding: '6rem 0', backgroundColor: 'var(--background)' }}>
+      <section className="py-24 bg-background">
         <div className="container">
-          <div style={{
-            backgroundColor: 'var(--secondary)',
-            borderRadius: '2rem',
-            padding: '4rem',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}>
-            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>¿Listo para empezar?</h2>
-            <p style={{ marginBottom: '2rem', maxWidth: '500px' }}>
+          <div className="bg-secondary rounded-3xl p-12 md:p-20 text-center flex flex-col items-center shadow-lg relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -ml-20 -mb-20"></div>
+            
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-secondary-foreground relative z-10">
+              ¿Listo para empezar?
+            </h2>
+            <p className="text-lg mb-8 max-w-xl text-secondary-foreground/80 relative z-10">
               Únete a nuestra plataforma y accede a contenido exclusivo diseñado por expertos.
             </p>
-            <button style={{
-              padding: '1rem 2.5rem',
-              borderRadius: 'var(--radius)',
-              backgroundColor: 'var(--primary)',
-              color: 'white',
-              fontWeight: 600,
-              boxShadow: '0 4px 14px 0 rgba(248, 180, 166, 0.39)'
-            }}>
-              Crear una cuenta gratis
-            </button>
+            <Link href="/register" className="relative z-10">
+              <Button size="lg" className="shadow-xl shadow-primary/40 text-base px-10 py-6">
+                Crear una cuenta gratis
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

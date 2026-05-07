@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AuthModal from '../auth/AuthModal';
 import { api } from '@/lib/api';
+import { Button } from '@/components/ui/Button';
 
 const Navbar = () => {
   const [authModal, setAuthModal] = useState(false);
@@ -32,62 +33,61 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar">
-        <div className="container navbar-container">
-          <Link href="/" className="navbar-logo">
+      <nav className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
+        <div className="container flex h-16 items-center justify-between">
+          <Link href="/" className="font-outfit text-2xl font-bold tracking-tight text-foreground hover:text-primary transition-colors">
             CENTRA
           </Link>
 
-          <div className="navbar-links">
-            {/* Show common links if not logged in */}
-            {!user && (
-              <>
-                <Link href="/" className="navbar-link">Inicio</Link>
-                <Link href="/#sobre-mi" className="navbar-link">Sobre Mí</Link>
-                <Link href="/#cursos" className="navbar-link">Cursos</Link>
-              </>
-            )}
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6 text-sm font-medium">
+              {/* Show common links if not logged in */}
+              {!user && (
+                <>
+                  <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">Inicio</Link>
+                  <Link href="/#sobre-mi" className="text-muted-foreground hover:text-foreground transition-colors">Sobre Mí</Link>
+                  <Link href="/#cursos" className="text-muted-foreground hover:text-foreground transition-colors">Cursos</Link>
+                </>
+              )}
 
-            {/* If logged in, show their respective dashboard link */}
-            {user && !user.is_admin && (
-              <Link href="/client" className="navbar-link">Mis Cursos</Link>
-            )}
+              {/* If logged in, show their respective dashboard link */}
+              {user && !user.is_admin && (
+                <Link href="/client" className="text-muted-foreground hover:text-foreground transition-colors">Mis Cursos</Link>
+              )}
 
-            {user && user.is_admin && (
-              <>
-                <Link href="/admin" className="navbar-link">Panel Admin</Link>
-              </>
-            )}
+              {user && user.is_admin && (
+                <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors font-semibold">Panel Admin</Link>
+              )}
+            </div>
             
-            <div className="navbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div className="flex items-center gap-3 border-l border-border pl-6 ml-2">
               {isLoadingUser ? (
-                <div style={{ width: '100px' }}></div> // Spacer
+                <div className="w-24 h-8 animate-pulse bg-muted rounded-lg"></div>
               ) : user ? (
                 <>
-                  <span style={{ fontSize: '0.9rem', color: 'var(--muted-foreground)' }}>
+                  <span className="text-sm font-medium text-foreground hidden sm:inline-block">
                     Hola, {user.first_name}
                   </span>
-                  <button 
+                  <Button 
+                    variant="outline"
+                    size="sm"
                     onClick={handleLogout}
-                    className="btn-outline"
-                    style={{ borderColor: '#dc2626', color: '#dc2626' }}
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
                   >
                     Cerrar Sesión
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
-                  <button 
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
                     onClick={() => setAuthModal(true)}
-                    className="btn-outline"
                   >
                     Iniciar Sesión
-                  </button>
-                  <Link 
-                    href="/register"
-                    className="btn-primary"
-                  >
-                    Registrarse
+                  </Button>
+                  <Link href="/register">
+                    <Button size="sm">Registrarse</Button>
                   </Link>
                 </>
               )}

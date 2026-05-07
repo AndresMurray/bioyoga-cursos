@@ -1,193 +1,202 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCourses, Course } from '@/hooks/useCourses';
+import CourseList from '@/components/admin/CourseList';
+import CourseForm from '@/components/admin/CourseForm';
+import ConfirmModal from '@/components/common/ConfirmModal';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState<'content' | 'users'>('content');
+  const [activeTab, setActiveTab] = useState<'courses' | 'users'>('courses');
+  const { courses, loading, fetchCourses, createCourse, updateCourse, deleteCourse } = useCourses();
   
-  // Mock data for users
-  const [users, setUsers] = useState([
+  // Modals state
+  const [isCourseFormOpen, setIsCourseFormOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Mock data for users tab (to be implemented later)
+  const [users] = useState([
     { id: 1, name: "Andrés Murray", email: "andres@email.com", activeCourses: ["Kinesiología Deportiva Avanzada"] },
     { id: 2, name: "Lucía Pérez", email: "lucia@email.com", activeCourses: [] },
   ]);
 
-  const [courses] = useState([
-    "Kinesiología Deportiva Avanzada",
-    "Rehabilitación Post-Quirúrgica",
-    "Vendaje Neuromuscular Pro"
-  ]);
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
+  const handleOpenCreateForm = () => {
+    setEditingCourse(null);
+    setIsCourseFormOpen(true);
+  };
+
+  const handleOpenEditForm = (course: Course) => {
+    setEditingCourse(course);
+    setIsCourseFormOpen(true);
+  };
+
+  const handleSubmitCourse = async (data: Partial<Course>) => {
+    let success = false;
+    if (editingCourse) {
+      const updated = await updateCourse(editingCourse.id, data);
+      success = !!updated;
+    } else {
+      const created = await createCourse(data);
+      success = !!created;
+    }
+    
+    if (success) {
+      setIsCourseFormOpen(false);
+      setEditingCourse(null);
+    }
+    return success;
+  };
+
+  const handleOpenDeleteModal = (course: Course) => {
+    setCourseToDelete(course);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!courseToDelete) return;
+    setIsDeleting(true);
+    const success = await deleteCourse(courseToDelete.id);
+    setIsDeleting(false);
+    if (success) {
+      setIsDeleteModalOpen(false);
+      setCourseToDelete(null);
+    } else {
+      alert("Error al eliminar el curso.");
+    }
+  };
 
   return (
-    <div className="animate-fade" style={{ minHeight: '80vh', padding: '4rem 0' }}>
+    <div className="animate-fade min-h-[80vh] py-16">
       <div className="container">
-        <header style={{ marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Panel de Administración 🔐</h1>
-          <p style={{ color: 'var(--muted-foreground)' }}>Gestiona el contenido y los alumnos de Centra.</p>
+        <header className="mb-12">
+          <h1 className="text-4xl font-bold mb-2 text-foreground">Panel de Administración 🔐</h1>
+          <p className="text-muted-foreground">Gestiona los cursos y los alumnos de Centra.</p>
         </header>
 
         {/* Tabs */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '2rem', 
-          borderBottom: '1px solid var(--border)',
-          marginBottom: '3rem'
-        }}>
+        <div className="flex gap-8 border-b border-border mb-12">
           <button 
-            onClick={() => setActiveTab('content')}
-            style={{
-              padding: '1rem 0',
-              borderBottom: activeTab === 'content' ? '2px solid var(--primary)' : '2px solid transparent',
-              color: activeTab === 'content' ? 'var(--primary)' : 'var(--muted-foreground)',
-              fontWeight: 600,
-              backgroundColor: 'transparent'
-            }}
+            onClick={() => setActiveTab('courses')}
+            className={`pb-4 font-semibold transition-all border-b-2 ${
+              activeTab === 'courses' 
+                ? 'border-primary text-primary' 
+                : 'border-transparent text-muted-foreground hover:text-primary'
+            }`}
           >
-            Contenido Home
+            Gestión de Cursos
           </button>
           <button 
             onClick={() => setActiveTab('users')}
-            style={{
-              padding: '1rem 0',
-              borderBottom: activeTab === 'users' ? '2px solid var(--primary)' : '2px solid transparent',
-              color: activeTab === 'users' ? 'var(--primary)' : 'var(--muted-foreground)',
-              fontWeight: 600,
-              backgroundColor: 'transparent'
-            }}
+            className={`pb-4 font-semibold transition-all border-b-2 ${
+              activeTab === 'users' 
+                ? 'border-primary text-primary' 
+                : 'border-transparent text-muted-foreground hover:text-primary'
+            }`}
           >
             Gestión de Alumnos
           </button>
         </div>
 
-        {activeTab === 'content' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
-            <div style={{ 
-              backgroundColor: 'white', 
-              padding: '2rem', 
-              borderRadius: 'var(--radius)', 
-              border: '1px solid var(--border)' 
-            }}>
-              <h3 style={{ marginBottom: '1.5rem' }}>Presentación Home</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 500 }}>Título Hero</label>
-                  <input type="text" defaultValue="Pasión por el movimiento y la salud" style={{
-                    padding: '0.8rem', borderRadius: '0.8rem', border: '1px solid var(--border)'
-                  }} />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 500 }}>Descripción Sobre Mí</label>
-                  <textarea rows={6} defaultValue="Hola, soy Lic. en Kinesiología. Mi objetivo es ayudarte a recuperar tu bienestar a través de técnicas innovadoras..." style={{
-                    padding: '0.8rem', borderRadius: '0.8rem', border: '1px solid var(--border)', fontFamily: 'inherit'
-                  }} />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.9rem', fontWeight: 500 }}>Imagen de Perfil (URL)</label>
-                  <input type="text" defaultValue="/images/kinesiologist.png" style={{
-                    padding: '0.8rem', borderRadius: '0.8rem', border: '1px solid var(--border)'
-                  }} />
-                </div>
-                <button style={{
-                  padding: '1rem',
-                  borderRadius: 'var(--radius)',
-                  backgroundColor: 'var(--primary)',
-                  color: 'white',
-                  fontWeight: 600
-                }}>
-                  Actualizar Home
-                </button>
-              </div>
+        {/* Cursos Tab */}
+        {activeTab === 'courses' && (
+          <div>
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-semibold">Cursos Disponibles</h2>
+              <Button onClick={handleOpenCreateForm}>
+                + Nuevo Curso
+              </Button>
             </div>
-
-            <div style={{ 
-              backgroundColor: 'white', 
-              padding: '2rem', 
-              borderRadius: 'var(--radius)', 
-              border: '1px solid var(--border)' 
-            }}>
-              <h3 style={{ marginBottom: '1.5rem' }}>Gestión de Cursos (Visibilidad)</h3>
-              <p style={{ color: 'var(--muted-foreground)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                Selecciona qué cursos aparecen en la tienda pública.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {courses.map((course, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', border: '1px solid var(--border)', borderRadius: '0.8rem' }}>
-                    <span style={{ fontWeight: 500 }}>{course}</span>
-                    <input type="checkbox" defaultChecked style={{ width: '20px', height: '20px', accentColor: 'var(--primary)' }} />
-                  </div>
-                ))}
-                <button style={{
-                  marginTop: '1rem',
-                  padding: '1rem',
-                  borderRadius: 'var(--radius)',
-                  backgroundColor: 'white',
-                  border: '1px solid var(--primary)',
-                  color: 'var(--primary)',
-                  fontWeight: 600
-                }}>
-                  Agregar Nuevo Curso
-                </button>
+            
+            {loading ? (
+              <div className="text-center p-12 text-muted-foreground">
+                Cargando cursos...
               </div>
-            </div>
+            ) : (
+              <CourseList 
+                courses={courses} 
+                onEdit={handleOpenEditForm} 
+                onDelete={handleOpenDeleteModal} 
+              />
+            )}
           </div>
         )}
 
+        {/* Alumnos Tab (Mock for now) */}
         {activeTab === 'users' && (
-          <div style={{ 
-            backgroundColor: 'white', 
-            borderRadius: 'var(--radius)', 
-            border: '1px solid var(--border)', 
-            overflow: 'hidden'
-          }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead style={{ backgroundColor: 'var(--muted)' }}>
-                <tr>
-                  <th style={{ textAlign: 'left', padding: '1.5rem', fontSize: '0.9rem' }}>Alumno</th>
-                  <th style={{ textAlign: 'left', padding: '1.5rem', fontSize: '0.9rem' }}>Cursos Activos</th>
-                  <th style={{ textAlign: 'right', padding: '1.5rem', fontSize: '0.9rem' }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} style={{ borderTop: '1px solid var(--border)' }}>
-                    <td style={{ padding: '1.5rem' }}>
-                      <div style={{ fontWeight: 600 }}>{user.name}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>{user.email}</div>
-                    </td>
-                    <td style={{ padding: '1.5rem' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        {user.activeCourses.length > 0 ? user.activeCourses.map((c, i) => (
-                          <span key={i} style={{ 
-                            fontSize: '0.7rem', 
-                            padding: '0.3rem 0.6rem', 
-                            backgroundColor: 'var(--accent)', 
-                            color: 'var(--accent-foreground)',
-                            borderRadius: '2rem',
-                            fontWeight: 600
-                          }}>{c}</span>
-                        )) : (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>Ninguno</span>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ padding: '1.5rem', textAlign: 'right' }}>
-                      <button style={{
-                        padding: '0.6rem 1.2rem',
-                        borderRadius: '0.6rem',
-                        backgroundColor: 'var(--secondary)',
-                        color: 'var(--secondary-foreground)',
-                        fontWeight: 600,
-                        fontSize: '0.8rem'
-                      }}>
-                        Gestionar Accesos
-                      </button>
-                    </td>
+          <Card className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
+                  <tr>
+                    <th className="px-6 py-4 font-semibold">Alumno</th>
+                    <th className="px-6 py-4 font-semibold">Cursos Activos</th>
+                    <th className="px-6 py-4 font-semibold text-right">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {users.map((user) => (
+                    <tr key={user.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-foreground">{user.name}</div>
+                        <div className="text-muted-foreground">{user.email}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          {user.activeCourses.length > 0 ? user.activeCourses.map((c, i) => (
+                            <Badge key={i} variant="secondary">{c}</Badge>
+                          )) : (
+                            <span className="text-muted-foreground italic">Ninguno</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <Button variant="outline" size="sm">
+                          Gestionar Accesos
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         )}
       </div>
+
+      {/* Modals */}
+      {isCourseFormOpen && (
+        <CourseForm 
+          course={editingCourse}
+          onSubmit={handleSubmitCourse}
+          onCancel={() => {
+            setIsCourseFormOpen(false);
+            setEditingCourse(null);
+          }}
+        />
+      )}
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        title="Eliminar Curso"
+        message={`¿Estás seguro que querés eliminar el curso "${courseToDelete?.title}"? Esta acción eliminará también todas sus clases y no se puede deshacer.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setIsDeleteModalOpen(false);
+          setCourseToDelete(null);
+        }}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

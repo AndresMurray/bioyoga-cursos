@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import { api } from '@/lib/api';
 import { validateField } from '@/utils/validations';
 import Link from 'next/link';
+import { Modal } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  // Kept initialMode prop for backward compatibility, but it will always act as Login
   initialMode?: 'login' | 'register'; 
 }
 
@@ -45,7 +47,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       const response = await api.post('/auth/login', { email: formData.email, password: formData.password });
       localStorage.setItem('token', response.access_token);
       
-      // Fetch user profile to know if they are an admin
       const user = await api.get('/auth/me');
       window.location.href = user.is_admin ? '/admin' : '/client';
     } catch (err: any) {
@@ -55,86 +56,64 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      style={{
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(74, 63, 53, 0.4)',
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        zIndex: 1000, backdropFilter: 'blur(4px)',
-      }}
-      onMouseDown={e => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="form-container" style={{ width: '95%', maxWidth: '420px', margin: 'auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.8rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>
-            ¡Bienvenido!
-          </h2>
-          <p style={{ color: 'var(--muted-foreground)', fontSize: '0.9rem' }}>
-            Ingresá para acceder a tus cursos
-          </p>
-        </div>
-
-        {errorMsg && (
-          <div className="form-global-error">
-            {errorMsg}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <input type="email" name="email" required value={formData.email} onChange={handleChange} className="form-input" />
-            {fieldErrors.email && <span className="form-error">{fieldErrors.email}</span>}
-          </div>
-          
-          <div className="form-group">
-            <label className="form-label">Contraseña</label>
-            <div className="password-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="form-input"
-                style={{ paddingRight: '2.5rem' }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(v => !v)}
-                className="eye-btn"
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
-            {fieldErrors.password && <span className="form-error">{fieldErrors.password}</span>}
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="form-submit-btn"
-          >
-            {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
-          </button>
-        </form>
-
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
-          <span style={{ color: 'var(--muted-foreground)' }}>¿No tenés cuenta?</span>
-          <Link
-            href="/register"
-            onClick={onClose}
-            style={{ background: 'none', color: 'var(--primary)', fontWeight: 600, marginLeft: '0.5rem', textDecoration: 'underline' }}
-          >
-            Registrate
-          </Link>
-        </div>
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[420px]">
+      <div className="text-center mb-6">
+        <h2 className="text-3xl font-semibold text-primary mb-2">¡Bienvenido!</h2>
+        <p className="text-sm text-muted-foreground">Ingresá para acceder a tus cursos</p>
       </div>
-    </div>
+
+      {errorMsg && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center">
+          {errorMsg}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <Input 
+          label="Email"
+          type="email" 
+          name="email" 
+          required 
+          value={formData.email} 
+          onChange={handleChange} 
+          error={fieldErrors.email}
+        />
+        
+        <div className="relative">
+          <Input 
+            label="Contraseña"
+            type={showPassword ? 'text' : 'password'}
+            name="password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            error={fieldErrors.password}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(v => !v)}
+            className="absolute right-3 top-9 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {showPassword ? '🙈' : '👁️'}
+          </button>
+        </div>
+
+        <Button type="submit" disabled={isLoading} className="w-full mt-2">
+          {isLoading ? 'Cargando...' : 'Iniciar Sesión'}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center text-sm">
+        <span className="text-muted-foreground">¿No tenés cuenta?</span>
+        <Link
+          href="/register"
+          onClick={onClose}
+          className="ml-2 font-semibold text-primary underline hover:text-primary/80 transition-colors"
+        >
+          Registrate
+        </Link>
+      </div>
+    </Modal>
   );
 }

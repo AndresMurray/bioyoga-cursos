@@ -42,3 +42,72 @@ class LoginRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+# ── Course Schemas ──────────────────────────────
+
+class LessonBase(BaseModel):
+    title: str = Field(..., min_length=1, description="El título no puede estar vacío.")
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    link_drive: Optional[str] = None
+    recursos_pdf: Optional[list[str]] = []
+    order: Optional[int] = 0
+
+class LessonCreate(LessonBase):
+    pass
+
+class LessonUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    link_drive: Optional[str] = None
+    recursos_pdf: Optional[list[str]] = None
+    order: Optional[int] = None
+
+class LessonResponse(LessonBase):
+    id: int
+    course_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class CourseBase(BaseModel):
+    title: str = Field(..., min_length=1, description="El título no puede estar vacío.")
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    duracion_dias: int = Field(30, ge=1, description="Debe ser al menos 1 día.")
+    link_pago: Optional[str] = None
+    is_visible: bool = False
+
+class CourseCreate(CourseBase):
+    pass
+
+class CourseUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    duracion_dias: Optional[int] = None
+    link_pago: Optional[str] = None
+    is_visible: Optional[bool] = None
+
+class CourseResponse(CourseBase):
+    id: int
+    lessons: list[LessonResponse] = []
+
+    class Config:
+        from_attributes = True
+
+class CourseListResponse(BaseModel):
+    """Lightweight response without lessons for list endpoints."""
+    id: int
+    title: str
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    duracion_dias: int
+    link_pago: Optional[str] = None
+    is_visible: bool
+
+    class Config:
+        from_attributes = True
