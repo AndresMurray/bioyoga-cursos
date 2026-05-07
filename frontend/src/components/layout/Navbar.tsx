@@ -41,8 +41,10 @@ const Navbar = () => {
 
           <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
             <Link href="/" style={{ fontWeight: 500 }}>Inicio</Link>
-            <Link href="#sobre-mi" style={{ fontWeight: 500 }}>Sobre Mí</Link>
-            <Link href="#cursos" style={{ fontWeight: 500 }}>Cursos</Link>
+            <Link href="/client" style={{ fontWeight: 500 }}>Mis Cursos</Link>
+            <Link href="/admin" style={{ fontWeight: 500 }}>Admin</Link>
+            <Link href="/#sobre-mi" style={{ fontWeight: 500 }}>Sobre Mí</Link>
+            <Link href="/#cursos" style={{ fontWeight: 500 }}>Cursos</Link>
             
             <div style={{ display: 'flex', gap: '1rem', marginLeft: '1rem' }}>
               <button 
