@@ -167,7 +167,6 @@ const AuthModal = ({ isOpen, onClose, initialMode }: AuthModalProps) => {
     </button>
   );
 
-  // ── Render ───────────────────────────────────
   return (
     <div
       style={{
@@ -176,7 +175,10 @@ const AuthModal = ({ isOpen, onClose, initialMode }: AuthModalProps) => {
         display: 'flex', justifyContent: 'center', alignItems: 'center',
         zIndex: 1000, backdropFilter: 'blur(4px)',
       }}
-      onClick={onClose}
+      onMouseDown={e => {
+        // Only close if clicking directly on the backdrop, not on anything inside the modal
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         style={{
@@ -191,7 +193,6 @@ const AuthModal = ({ isOpen, onClose, initialMode }: AuthModalProps) => {
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
-        onClick={e => e.stopPropagation()}
       >
         {/* ── Success screen ── */}
         {isSuccess ? (
