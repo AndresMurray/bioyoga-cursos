@@ -27,60 +27,59 @@ def is_configured() -> bool:
     return bool(CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET)
 
 
-# TODO: Descomentar cuando se tengan las credenciales de Cloudinary
-#
-# import cloudinary
-# import cloudinary.uploader
-#
-# if is_configured():
-#     cloudinary.config(
-#         cloud_name=CLOUDINARY_CLOUD_NAME,
-#         api_key=CLOUDINARY_API_KEY,
-#         api_secret=CLOUDINARY_API_SECRET,
-#     )
-#
-#
-# async def upload_image(file, folder: str = "centra/images") -> str:
-#     """
-#     Sube una imagen a Cloudinary y retorna la URL segura.
-#     Args:
-#         file: archivo (UploadFile de FastAPI)
-#         folder: carpeta destino en Cloudinary
-#     Returns:
-#         URL segura de la imagen subida
-#     """
-#     if not is_configured():
-#         raise Exception("Cloudinary no está configurado. Revisa las variables de entorno.")
-#
-#     result = cloudinary.uploader.upload(
-#         file.file,
-#         folder=folder,
-#         resource_type="image",
-#     )
-#     return result["secure_url"]
-#
-#
-# async def upload_pdf(file, folder: str = "centra/pdfs") -> str:
-#     """
-#     Sube un PDF a Cloudinary y retorna la URL segura.
-#     """
-#     if not is_configured():
-#         raise Exception("Cloudinary no está configurado. Revisa las variables de entorno.")
-#
-#     result = cloudinary.uploader.upload(
-#         file.file,
-#         folder=folder,
-#         resource_type="raw",
-#     )
-#     return result["secure_url"]
-#
-#
-# async def delete_file(public_id: str) -> bool:
-#     """
-#     Elimina un archivo de Cloudinary por su public_id.
-#     """
-#     if not is_configured():
-#         raise Exception("Cloudinary no está configurado.")
-#
-#     result = cloudinary.uploader.destroy(public_id)
-#     return result.get("result") == "ok"
+import cloudinary
+import cloudinary.uploader
+from fastapi import UploadFile
+
+if is_configured():
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
+    )
+
+
+async def upload_image(file: UploadFile, folder: str = "centra/images") -> str:
+    """
+    Sube una imagen a Cloudinary y retorna la URL segura.
+    Args:
+        file: archivo (UploadFile de FastAPI)
+        folder: carpeta destino en Cloudinary
+    Returns:
+        URL segura de la imagen subida
+    """
+    if not is_configured():
+        raise Exception("Cloudinary no está configurado. Revisa las variables de entorno.")
+
+    result = cloudinary.uploader.upload(
+        file.file,
+        folder=folder,
+        resource_type="image",
+    )
+    return result["secure_url"]
+
+
+async def upload_pdf(file: UploadFile, folder: str = "centra/pdfs") -> str:
+    """
+    Sube un PDF a Cloudinary y retorna la URL segura.
+    """
+    if not is_configured():
+        raise Exception("Cloudinary no está configurado. Revisa las variables de entorno.")
+
+    result = cloudinary.uploader.upload(
+        file.file,
+        folder=folder,
+        resource_type="raw",
+    )
+    return result["secure_url"]
+
+
+async def delete_file(public_id: str) -> bool:
+    """
+    Elimina un archivo de Cloudinary por su public_id.
+    """
+    if not is_configured():
+        raise Exception("Cloudinary no está configurado.")
+
+    result = cloudinary.uploader.destroy(public_id)
+    return result.get("result") == "ok"

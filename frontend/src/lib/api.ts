@@ -72,4 +72,27 @@ export const api = {
     }
     return response.json();
   },
+
+  async upload(endpoint: string, formData: FormData) {
+    // Para FormData NO seteamos el Content-Type para que el navegador ponga el boundary automático
+    const headers: Record<string, string> = {};
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.detail || `Error al subir archivo: ${response.statusText}`);
+    }
+    return response.json();
+  },
 };

@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 
+import { api } from '@/lib/api';
+
 interface CourseFormProps {
   course?: Course | null;
   onSubmit: (data: Partial<Course>) => Promise<any>;
@@ -23,7 +25,11 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
     link_pago: '',
     is_visible: false,
   });
+  
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [error, setError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (course) {
@@ -35,6 +41,9 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
         link_pago: course.link_pago || '',
         is_visible: course.is_visible || false,
       });
+      if (course.image_url) {
+        setImagePreview(course.image_url);
+      }
     }
   }, [course]);
 
@@ -46,6 +55,14 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
       setFormData(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -62,11 +79,30 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
       return;
     }
 
-    const result = await onSubmit(formData);
+    let finalImageUrl = formData.image_url;
+
+    if (imageFile) {
+      setIsUploading(true);
+      try {
+        const uploadData = new FormData();
+        uploadData.append('file', imageFile);
+        const response = await api.upload('/uploads/image', uploadData);
+        finalImageUrl = response.url;
+      } catch (err: any) {
+        setIsUploading(false);
+        setError(`Error al subir imagen: ${err.message}`);
+        return;
+      }
+      setIsUploading(false);
+    }
+
+    const result = await onSubmit({ ...formData, image_url: finalImageUrl });
     if (!result) {
       setError('Ocurrió un error al guardar el curso.');
     }
   };
+
+  const isWorking = isLoading || isUploading;
 
   return (
     <Modal isOpen={true} onClose={onCancel} className="max-w-2xl">
@@ -97,13 +133,20 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
           rows={4}
         />
 
-        <Input
-          label="URL de Imagen (Cloudinary)"
-          name="image_url"
-          value={formData.image_url}
-          onChange={handleChange}
-          placeholder="https://res.cloudinary.com/..."
-        />
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-foreground">Imagen de Portada</label>
+          {imagePreview && (
+            <div className="relative w-full h-40 mb-2 rounded-lg overflow-hidden border border-border">
+              <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          <p className="text-xs text-muted-foreground">Sube una imagen para el curso. Si no subes ninguna, se mantendrá la actual.</p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
@@ -140,11 +183,11 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
         </div>
 
         <div className="flex gap-3 justify-end mt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isWorking}>
             Cancelar
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Guardando...' : course ? 'Guardar Cambios' : 'Crear Curso'}
+          <Button type="submit" disabled={isWorking}>
+            {isUploading ? 'Subiendo imagen...' : isLoading ? 'Guardando...' : course ? 'Guardar Cambios' : 'Crear Curso'}
           </Button>
         </div>
       </form>

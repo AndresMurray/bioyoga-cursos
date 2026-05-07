@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
 
+import { api } from '@/lib/api';
+
 interface LessonFormProps {
   lesson?: Lesson | null;
   onSubmit: (data: Partial<Lesson>) => Promise<any>;
@@ -20,9 +22,16 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
     description: '',
     image_url: '',
     link_drive: '',
-    recursos_pdf: '' as string,
   });
+  
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  
+  const [pdfFiles, setPdfFiles] = useState<File[]>([]);
+  const [existingPdfs, setExistingPdfs] = useState<string[]>([]);
+  
   const [error, setError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (lesson) {
@@ -31,14 +40,31 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
         description: lesson.description || '',
         image_url: lesson.image_url || '',
         link_drive: lesson.link_drive || '',
-        recursos_pdf: (lesson.recursos_pdf || []).join(', '),
       });
+      if (lesson.image_url) {
+        setImagePreview(lesson.image_url);
+      }
+      setExistingPdfs(lesson.recursos_pdf || []);
     }
   }, [lesson]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setPdfFiles(Array.from(e.target.files));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,23 +76,48 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
       return;
     }
 
-    const pdfList = formData.recursos_pdf
-      .split(',')
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+    setIsUploading(true);
+    let finalImageUrl = formData.image_url;
 
-    const result = await onSubmit({
-      title: formData.title,
-      description: formData.description || undefined,
-      image_url: formData.image_url || undefined,
-      link_drive: formData.link_drive || undefined,
-      recursos_pdf: pdfList,
-    });
+    try {
+      if (imageFile) {
+        const uploadData = new FormData();
+        uploadData.append('file', imageFile);
+        const response = await api.upload('/uploads/image', uploadData);
+        finalImageUrl = response.url;
+      }
 
-    if (!result) {
-      setError('Ocurrió un error al guardar la clase.');
+      let newPdfUrls: string[] = [];
+      if (pdfFiles.length > 0) {
+        const uploadData = new FormData();
+        pdfFiles.forEach(file => {
+          uploadData.append('files', file);
+        });
+        const response = await api.upload('/uploads/pdf', uploadData);
+        newPdfUrls = response.urls;
+      }
+
+      const allPdfs = [...existingPdfs, ...newPdfUrls];
+
+      const result = await onSubmit({
+        title: formData.title,
+        description: formData.description || undefined,
+        image_url: finalImageUrl || undefined,
+        link_drive: formData.link_drive || undefined,
+        recursos_pdf: allPdfs,
+      });
+
+      if (!result) {
+        setError('Ocurrió un error al guardar la clase.');
+      }
+    } catch (err: any) {
+      setError(`Error en la subida de archivos: ${err.message}`);
+    } finally {
+      setIsUploading(false);
     }
   };
+
+  const isWorking = isLoading || isUploading;
 
   return (
     <Modal isOpen={true} onClose={onCancel} className="max-w-xl">
@@ -97,13 +148,19 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
           rows={3}
         />
 
-        <Input
-          label="Imagen de Portada (URL)"
-          name="image_url"
-          value={formData.image_url}
-          onChange={handleChange}
-          placeholder="https://res.cloudinary.com/..."
-        />
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-foreground">Imagen de Portada</label>
+          {imagePreview && (
+            <div className="relative w-full h-32 mb-2 rounded-lg overflow-hidden border border-border">
+              <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        </div>
 
         <Input
           label="Link de Drive / Video"
@@ -113,21 +170,50 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
           placeholder="https://drive.google.com/..."
         />
 
-        <Textarea
-          label="Recursos PDF (URLs separadas por coma)"
-          name="recursos_pdf"
-          value={formData.recursos_pdf}
-          onChange={handleChange}
-          rows={2}
-          placeholder="https://..., https://..."
-        />
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-foreground">Subir Nuevos PDFs</label>
+          <Input
+            type="file"
+            accept="application/pdf"
+            multiple
+            onChange={handlePdfChange}
+          />
+          {pdfFiles.length > 0 && (
+            <p className="text-xs text-primary">{pdfFiles.length} archivo(s) seleccionado(s) listos para subir.</p>
+          )}
+        </div>
+
+        {existingPdfs.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-foreground">PDFs Actuales</label>
+            <ul className="text-sm space-y-2">
+              {existingPdfs.map((url, i) => {
+                const fileName = url.split('/').pop() || `Documento ${i + 1}`;
+                return (
+                  <li key={i} className="flex items-center justify-between bg-muted px-3 py-2 rounded-md">
+                    <a href={url} target="_blank" rel="noreferrer" className="text-primary hover:underline truncate max-w-[250px]" title={fileName}>
+                      {fileName}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setExistingPdfs(prev => prev.filter((_, index) => index !== i))}
+                      className="text-red-500 hover:text-red-700 font-medium text-xs"
+                    >
+                      Eliminar
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         <div className="flex gap-3 justify-end mt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isWorking}>
             Cancelar
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Guardando...' : lesson ? 'Guardar Cambios' : 'Crear Clase'}
+          <Button type="submit" disabled={isWorking}>
+            {isUploading ? 'Subiendo archivos...' : isLoading ? 'Guardando...' : lesson ? 'Guardar Cambios' : 'Crear Clase'}
           </Button>
         </div>
       </form>
