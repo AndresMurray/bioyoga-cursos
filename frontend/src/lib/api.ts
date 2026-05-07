@@ -20,7 +20,16 @@ export const api = {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      throw new Error(errorData?.detail || `Error: ${response.statusText}`);
+      let errorMessage = `Error: ${response.statusText}`;
+      if (errorData?.detail) {
+        if (Array.isArray(errorData.detail)) {
+          // It's a Pydantic validation error
+          errorMessage = errorData.detail.map((err: any) => err.msg).join(', ');
+        } else {
+          errorMessage = errorData.detail;
+        }
+      }
+      throw new Error(errorMessage);
     }
     return response.json();
   },
