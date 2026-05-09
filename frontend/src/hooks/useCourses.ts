@@ -21,6 +21,8 @@ export interface Course {
   images: CourseImage[];
   duracion_dias: number;
   link_pago: string | null;
+  price: number;
+  discount_percentage: number;
   is_visible: boolean;
   lessons?: Lesson[];
 }

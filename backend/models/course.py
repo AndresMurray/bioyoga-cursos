@@ -24,6 +24,8 @@ class Course(Base):
     description = Column(Text, nullable=True)
     duracion_dias = Column(Integer, nullable=False, default=30)
     link_pago = Column(String, nullable=True)  # Mercado Pago URL
+    price = Column(Integer, default=0, nullable=False)
+    discount_percentage = Column(Integer, default=0, nullable=False)
     is_visible = Column(Boolean, default=False)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

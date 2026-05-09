@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { PriceDisplay } from '@/components/ui/PriceDisplay';
 
 interface CourseListProps {
   courses: Course[];
@@ -45,11 +46,18 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
               {course.description || 'Sin descripción'}
             </p>
             
-            <Badge variant={course.is_visible ? 'success' : 'secondary'} className="mb-4">
-              {course.is_visible ? 'Visible' : 'Oculto'}
-            </Badge>
+            <div className="flex justify-between items-start mb-4">
+              <Badge variant={course.is_visible ? 'success' : 'secondary'}>
+                {course.is_visible ? 'Visible' : 'Oculto'}
+              </Badge>
+              <PriceDisplay 
+                price={course.price || 0} 
+                discountPercentage={course.discount_percentage || 0} 
+                size="sm" 
+              />
+            </div>
 
-            <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+            <div className="flex items-center justify-between pt-4 mt-2 border-t border-border">
               <span className="text-xs text-muted-foreground font-medium">
                 {course.duracion_dias} días
               </span>

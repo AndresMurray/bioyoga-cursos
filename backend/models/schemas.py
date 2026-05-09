@@ -101,6 +101,8 @@ class CourseBase(BaseModel):
     images: Optional[list[CourseImageBase]] = []
     duracion_dias: int = Field(30, ge=1, description="Debe ser al menos 1 día.")
     link_pago: Optional[str] = None
+    price: int = Field(0, description="Precio en pesos argentinos")
+    discount_percentage: int = Field(0, ge=0, le=100, description="Porcentaje de descuento")
     is_visible: bool = False
 
 class CourseCreate(CourseBase):
@@ -112,6 +114,8 @@ class CourseUpdate(BaseModel):
     images: Optional[list[CourseImageBase]] = None
     duracion_dias: Optional[int] = None
     link_pago: Optional[str] = None
+    price: Optional[int] = None
+    discount_percentage: Optional[int] = Field(None, ge=0, le=100)
     is_visible: Optional[bool] = None
 
 class CourseResponse(CourseBase):
@@ -130,6 +134,8 @@ class CourseListResponse(BaseModel):
     images: list[CourseImageResponse] = []
     duracion_dias: int
     link_pago: Optional[str] = None
+    price: int = 0
+    discount_percentage: int = 0
     is_visible: bool
 
     class Config:

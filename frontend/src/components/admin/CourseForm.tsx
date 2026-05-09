@@ -23,6 +23,8 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
     description: '',
     duracion_dias: 30,
     link_pago: '',
+    price: 0,
+    discount_percentage: 0,
     is_visible: false,
   });
   
@@ -43,6 +45,8 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
         description: course.description || '',
         duracion_dias: course.duracion_dias || 30,
         link_pago: course.link_pago || '',
+        price: course.price || 0,
+        discount_percentage: course.discount_percentage || 0,
         is_visible: course.is_visible || false,
       });
       if (course.images && course.images.length > 0) {
@@ -256,6 +260,26 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
               value={formData.link_pago}
               onChange={handleChange}
               placeholder="https://www.mercadopago.com.ar/..."
+            />
+            
+            <Input
+              label="Precio (ARS) *"
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              min={0}
+              required
+            />
+            
+            <Input
+              label="Descuento (%)"
+              type="number"
+              name="discount_percentage"
+              value={formData.discount_percentage}
+              onChange={handleChange}
+              min={0}
+              max={100}
             />
           </div>
 
