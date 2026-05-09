@@ -17,8 +17,31 @@ async function getVisibleCourses(): Promise<Course[]> {
   }
 }
 
+async function getHomeConfig() {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const res = await fetch(`${apiUrl}/home-config`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching home config:', error);
+    return null;
+  }
+}
+
 export default async function Home() {
-  const courses = await getVisibleCourses();
+  const [courses, homeConfig] = await Promise.all([
+    getVisibleCourses(),
+    getHomeConfig()
+  ]);
+
+  // Fallback values in case config is not yet set
+  const heroData = homeConfig || {
+    hero_title: "Pasión por el movimiento y la salud",
+    hero_subtitle_1: "Hola, soy Lic. en Kinesiología. Mi objetivo es ayudarte a recuperar tu bienestar a través de técnicas innovadoras y un trato cercano y profesional.",
+    hero_subtitle_2: "En este espacio no solo brindo atención personalizada, sino que también comparto mis conocimientos a través de cursos especializados para profesionales y estudiantes del área.",
+    hero_image_url: "/images/kinesiologist.png"
+  };
 
   return (
     <div className="animate-fade">
@@ -30,7 +53,7 @@ export default async function Home() {
           <div className="relative">
             <div className="absolute -inset-4 bg-accent rounded-2xl -z-10 transform -rotate-2"></div>
             <img 
-              src="/images/kinesiologist.png" 
+              src={heroData.hero_image_url} 
               alt="Kinesióloga" 
               className="w-full rounded-xl shadow-2xl block"
             />
@@ -40,13 +63,13 @@ export default async function Home() {
               Sobre Mí
             </span>
             <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground">
-              Pasión por el movimiento y la salud
+              {heroData.hero_title}
             </h1>
             <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              Hola, soy Lic. en Kinesiología. Mi objetivo es ayudarte a recuperar tu bienestar a través de técnicas innovadoras y un trato cercano y profesional.
+              {heroData.hero_subtitle_1}
             </p>
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              En este espacio no solo brindo atención personalizada, sino que también comparto mis conocimientos a través de cursos especializados para profesionales y estudiantes del área.
+              {heroData.hero_subtitle_2}
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#cursos">

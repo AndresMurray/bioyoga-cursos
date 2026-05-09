@@ -4,13 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useCourses, Course } from '@/hooks/useCourses';
 import CourseList from '@/components/admin/CourseList';
 import CourseForm from '@/components/admin/CourseForm';
+import HomeConfigForm from '@/components/admin/HomeConfigForm';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState<'courses' | 'users'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'users' | 'home_config'>('courses');
   const { courses, loading, fetchCourses, createCourse, updateCourse, deleteCourse } = useCourses();
   
   // Modals state
@@ -97,6 +98,16 @@ const AdminDashboard = () => {
             Gestión de Cursos
           </button>
           <button 
+            onClick={() => setActiveTab('home_config')}
+            className={`pb-4 font-semibold transition-all border-b-2 ${
+              activeTab === 'home_config' 
+                ? 'border-primary text-primary' 
+                : 'border-transparent text-muted-foreground hover:text-primary'
+            }`}
+          >
+            Configuración Home
+          </button>
+          <button 
             onClick={() => setActiveTab('users')}
             className={`pb-4 font-semibold transition-all border-b-2 ${
               activeTab === 'users' 
@@ -130,6 +141,11 @@ const AdminDashboard = () => {
               />
             )}
           </div>
+        )}
+
+        {/* Home Config Tab */}
+        {activeTab === 'home_config' && (
+          <HomeConfigForm />
         )}
 
         {/* Alumnos Tab (Mock for now) */}

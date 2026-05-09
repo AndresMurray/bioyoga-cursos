@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.session import engine, Base
-from models import user, course, lesson  # Import to register models
-from routes import auth, courses, lessons, uploads
+from models import user, course, lesson, home_config as model_home_config
+from routes import auth, courses, lessons, uploads, home_config as route_home_config
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -22,6 +22,7 @@ app.include_router(auth.router)
 app.include_router(courses.router)
 app.include_router(lessons.router)
 app.include_router(uploads.router)
+app.include_router(route_home_config.router)
 
 @app.get("/")
 async def root():

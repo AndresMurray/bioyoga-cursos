@@ -140,3 +140,23 @@ class CourseListResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# ── HOME CONFIG ──────────────────────────────
+
+class HomeConfigBase(BaseModel):
+    hero_title: str
+    hero_subtitle_1: str
+    hero_subtitle_2: str
+    hero_image_url: str
+
+class HomeConfigUpdate(BaseModel):
+    hero_title: Optional[str] = None
+    hero_subtitle_1: Optional[str] = None
+    hero_subtitle_2: Optional[str] = None
+    hero_image_url: Optional[str] = None
+
+class HomeConfigResponse(HomeConfigBase):
+    id: int
+
+    class Config:
+        from_attributes = True
