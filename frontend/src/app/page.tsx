@@ -3,28 +3,22 @@ import CourseCard from '@/components/courses/CourseCard';
 import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import { Course } from '@/hooks/useCourses';
 
-export default function Home() {
-  const courses = [
-    {
-      title: "Kinesiología Deportiva Avanzada",
-      image: "/images/course1.png",
-      description: "Aprende las técnicas más modernas para la recuperación de atletas de alto rendimiento. Este curso cubre desde la evaluación inicial hasta el retorno al campo.",
-      price: "$15.000"
-    },
-    {
-      title: "Rehabilitación Post-Quirúrgica",
-      image: "/images/course1.png",
-      description: "Protocolos actualizados para la rehabilitación de cirugías de rodilla, cadera y columna. Enfocado en la evidencia científica actual.",
-      price: "$12.500"
-    },
-    {
-      title: "Vendaje Neuromuscular Pro",
-      image: "/images/course1.png",
-      description: "Domina las aplicaciones de taping para diferentes patologías músculo-esqueléticas y mejora el rendimiento de tus pacientes.",
-      price: "$9.800"
-    }
-  ];
+async function getVisibleCourses(): Promise<Course[]> {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const res = await fetch(`${apiUrl}/courses?visible_only=true`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const courses = await getVisibleCourses();
 
   return (
     <div className="animate-fade">
@@ -80,17 +74,19 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {courses.map((course, index) => (
-              <CourseCard 
-                key={index}
-                title={course.title}
-                image={course.image}
-                description={course.description}
-                price={course.price}
-              />
-            ))}
-          </div>
+          {courses.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {courses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center p-12 bg-muted rounded-2xl border border-border">
+              <span className="text-4xl block mb-4">📚</span>
+              <h3 className="text-xl font-bold mb-2">Próximamente nuevos cursos</h3>
+              <p className="text-muted-foreground">Actualmente estamos preparando nuevo contenido. ¡Mantenete atento!</p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -4,66 +4,115 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { PriceDisplay } from '@/components/ui/PriceDisplay';
+import { ImageCarousel } from '@/components/ui/ImageCarousel';
+import AuthModal from '@/components/auth/AuthModal';
+import { Course } from '@/hooks/useCourses';
 
-interface CourseProps {
-  title: string;
-  image: string;
-  description: string;
-  price: string;
+interface CourseCardProps {
+  course: Course;
 }
 
-const CourseCard = ({ title, image, description, price }: CourseProps) => {
+const CourseCard = ({ course }: CourseCardProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const images = course.images && course.images.length > 0 
+    ? course.images.map(img => img.url) 
+    : ['/images/placeholder.png'];
+
+  const coverImage = images[0];
+
+  const handleBuyClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the course modal if clicked from outside
+    const token = localStorage.getItem('token');
+    if (token) {
+      // User is logged in, redirect to client dashboard or checkout
+      window.location.href = '/client';
+    } else {
+      // Prompt login/register
+      setShowAuthModal(true);
+      // Close the course details modal if it was open
+      setShowModal(false); 
+    }
+  };
 
   return (
     <>
       <Card 
-        onClick={() => setShowModal(true)}
-        className="group cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 animate-fade"
+        className="group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 animate-fade flex flex-col h-full"
       >
-        <div className="h-48 overflow-hidden">
-          <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div className="h-48 overflow-hidden relative">
+          <img src={coverImage} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          {course.discount_percentage > 0 && (
+            <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+              {course.discount_percentage}% OFF
+            </div>
+          )}
         </div>
-        <CardContent className="p-6">
-          <h3 className="text-xl font-semibold mb-2 line-clamp-1">{title}</h3>
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2 min-h-[40px]">
-            {description}
-          </p>
-          <div className="flex justify-between items-center pt-4 border-t border-border">
-            <span className="font-bold text-primary text-lg">{price}</span>
-            <Button variant="secondary" size="sm" className="bg-accent text-accent-foreground hover:bg-accent/80">
+        <CardContent className="p-6 flex flex-col flex-grow">
+          <h3 className="text-xl font-semibold mb-4 line-clamp-2 flex-grow">{course.title}</h3>
+          
+          <div className="flex justify-between items-center pt-4 border-t border-border mt-auto mb-5">
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider mb-1">Inversión</span>
+              <PriceDisplay price={course.price} discountPercentage={course.discount_percentage} size="md" />
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button 
+              variant="secondary" 
+              className="flex-1 bg-accent text-accent-foreground hover:bg-accent/80"
+              onClick={() => setShowModal(true)}
+            >
               Ver más
+            </Button>
+            <Button 
+              className="flex-1 shadow-md shadow-primary/20"
+              onClick={handleBuyClick}
+            >
+              Comprar
             </Button>
           </div>
         </CardContent>
       </Card>
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} className="p-0 overflow-hidden max-w-lg">
-        <div className="h-64 overflow-hidden relative">
-          <img src={image} alt={title} className="w-full h-full object-cover" />
+        <div className="h-64 relative bg-muted">
+          <ImageCarousel images={images} alt={course.title} />
           <button 
             onClick={() => setShowModal(false)}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors"
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors z-20"
           >
             ×
           </button>
         </div>
         <div className="p-8">
-          <h2 className="text-2xl font-bold mb-4">{title}</h2>
-          <p className="text-muted-foreground mb-8 leading-relaxed">
-            {description}
+          <h2 className="text-2xl font-bold mb-4">{course.title}</h2>
+          <p className="text-muted-foreground mb-8 leading-relaxed whitespace-pre-wrap">
+            {course.description || 'Sin descripción'}
           </p>
-          <div className="flex gap-6 items-center">
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Inversión</span>
-              <span className="text-2xl font-bold text-primary">{price}</span>
+          <div className="flex flex-col sm:flex-row gap-6 items-center bg-muted/50 p-4 rounded-xl">
+            <div className="flex flex-col flex-1 w-full">
+              <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider mb-1">Inversión</span>
+              <PriceDisplay price={course.price} discountPercentage={course.discount_percentage} size="lg" />
             </div>
-            <Button className="flex-1 py-6 text-base font-bold shadow-lg shadow-primary/30">
+            <Button 
+              className="w-full sm:w-auto py-6 px-8 text-base font-bold shadow-lg shadow-primary/30 shrink-0"
+              onClick={handleBuyClick}
+            >
               Comprar Curso
             </Button>
           </div>
         </div>
       </Modal>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        initialMode="register" 
+      />
     </>
   );
 };

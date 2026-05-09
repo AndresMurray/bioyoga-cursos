@@ -15,18 +15,22 @@ const ClientDashboard = () => {
     }
   ];
 
-  const availableCourses = [
+  const availableCourses: any[] = [
     {
+      id: 991,
       title: "Rehabilitación Post-Quirúrgica",
-      image: "/images/course1.png",
+      images: [{ url: "/images/course1.png" }],
       description: "Protocolos actualizados para la rehabilitación de cirugías de rodilla, cadera y columna.",
-      price: "$12.500"
+      price: 12500,
+      discount_percentage: 0
     },
     {
+      id: 992,
       title: "Vendaje Neuromuscular Pro",
-      image: "/images/course1.png",
+      images: [{ url: "/images/course1.png" }],
       description: "Domina las aplicaciones de taping para diferentes patologías.",
-      price: "$9.800"
+      price: 9800,
+      discount_percentage: 10
     }
   ];
 
@@ -126,10 +130,7 @@ const ClientDashboard = () => {
             {availableCourses.map((course, i) => (
               <CourseCard 
                 key={i}
-                title={course.title}
-                image={course.image}
-                description={course.description}
-                price={course.price}
+                course={course as any}
               />
             ))}
           </div>
