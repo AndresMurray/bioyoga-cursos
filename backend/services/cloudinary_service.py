@@ -17,9 +17,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "")
-CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "")
-CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "")
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "").strip()
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "").strip()
 
 
 def is_configured() -> bool:
@@ -74,12 +74,46 @@ async def upload_pdf(file: UploadFile, folder: str = "centra/pdfs") -> str:
     return result["secure_url"]
 
 
-async def delete_file(public_id: str) -> bool:
+async def delete_file(public_id: str, resource_type: str = "image") -> bool:
     """
     Elimina un archivo de Cloudinary por su public_id.
+    resource_type: 'image' para imágenes, 'raw' para PDFs.
     """
     if not is_configured():
         raise Exception("Cloudinary no está configurado.")
 
-    result = cloudinary.uploader.destroy(public_id)
+    result = cloudinary.uploader.destroy(public_id, resource_type=resource_type)
     return result.get("result") == "ok"
+
+
+def extract_public_id(url: str) -> str:
+    """
+    Extrae el public_id de una URL segura de Cloudinary.
+    Ejemplo: https://res.cloudinary.com/xxx/image/upload/v123/centra/images/abc123.jpg
+             → centra/images/abc123
+    """
+    # Buscar la parte después de /upload/vXXXX/ o /upload/
+    import re
+    match = re.search(r'/upload/(?:v\d+/)?(.+)$', url)
+    if match:
+        public_id = match.group(1)
+        # Quitar la extensión del archivo
+        public_id = re.sub(r'\.[^.]+$', '', public_id)
+        return public_id
+    return ""
+
+
+async def delete_image_by_url(url: str) -> bool:
+    """Elimina una imagen de Cloudinary dada su URL."""
+    public_id = extract_public_id(url)
+    if not public_id:
+        return False
+    return await delete_file(public_id, resource_type="image")
+
+
+async def delete_pdf_by_url(url: str) -> bool:
+    """Elimina un PDF de Cloudinary dada su URL."""
+    public_id = extract_public_id(url)
+    if not public_id:
+        return False
+    return await delete_file(public_id, resource_type="raw")

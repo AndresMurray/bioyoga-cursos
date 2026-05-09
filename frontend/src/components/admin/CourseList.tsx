@@ -28,9 +28,9 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {courses.map(course => (
         <Card key={course.id} className="group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-          {course.image_url ? (
+          {course.images && course.images.length > 0 ? (
             <img 
-              src={course.image_url} 
+              src={course.images[0].url} 
               alt={course.title} 
               className="w-full h-48 object-cover bg-muted" 
             />

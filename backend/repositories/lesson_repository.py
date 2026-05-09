@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from models.lesson import Lesson
+from models.lesson import Lesson, LessonPdf
 
 
 class LessonRepository:
@@ -28,16 +28,27 @@ class LessonRepository:
         return (max_order or 0) + 1
 
     def create(self, data: dict):
+        pdfs_data = data.pop("pdfs", [])
         lesson = Lesson(**data)
+        for pdf in pdfs_data:
+            lesson.pdfs.append(LessonPdf(**pdf))
         self.db.add(lesson)
         self.db.commit()
         self.db.refresh(lesson)
         return lesson
 
     def update(self, lesson: Lesson, data: dict):
+        pdfs_data = data.pop("pdfs", None)
+        
         for key, value in data.items():
             if value is not None:
                 setattr(lesson, key, value)
+                
+        if pdfs_data is not None:
+            lesson.pdfs = []
+            for pdf in pdfs_data:
+                lesson.pdfs.append(LessonPdf(**pdf))
+                
         self.db.commit()
         self.db.refresh(lesson)
         return lesson

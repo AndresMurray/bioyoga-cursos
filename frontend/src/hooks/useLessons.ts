@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { Lesson } from './useCourses';
+export type { Lesson };
 
 export function useLessons(courseId?: number) {
   const [lessons, setLessons] = useState<Lesson[]>([]);

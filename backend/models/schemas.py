@@ -46,12 +46,33 @@ class Token(BaseModel):
 
 # ── Course Schemas ──────────────────────────────
 
+class LessonPdfBase(BaseModel):
+    title: str
+    url: str
+
+class LessonPdfResponse(LessonPdfBase):
+    id: int
+    lesson_id: int
+
+    class Config:
+        from_attributes = True
+
+class CourseImageBase(BaseModel):
+    url: str
+
+class CourseImageResponse(CourseImageBase):
+    id: int
+    course_id: int
+
+    class Config:
+        from_attributes = True
+
 class LessonBase(BaseModel):
     title: str = Field(..., min_length=1, description="El título no puede estar vacío.")
     description: Optional[str] = None
     image_url: Optional[str] = None
     link_drive: Optional[str] = None
-    recursos_pdf: Optional[list[str]] = []
+    pdfs: Optional[list[LessonPdfBase]] = []
     order: Optional[int] = 0
 
 class LessonCreate(LessonBase):
@@ -62,12 +83,13 @@ class LessonUpdate(BaseModel):
     description: Optional[str] = None
     image_url: Optional[str] = None
     link_drive: Optional[str] = None
-    recursos_pdf: Optional[list[str]] = None
+    pdfs: Optional[list[LessonPdfBase]] = None
     order: Optional[int] = None
 
 class LessonResponse(LessonBase):
     id: int
     course_id: int
+    pdfs: list[LessonPdfResponse] = []
 
     class Config:
         from_attributes = True
@@ -76,7 +98,7 @@ class LessonResponse(LessonBase):
 class CourseBase(BaseModel):
     title: str = Field(..., min_length=1, description="El título no puede estar vacío.")
     description: Optional[str] = None
-    image_url: Optional[str] = None
+    images: Optional[list[CourseImageBase]] = []
     duracion_dias: int = Field(30, ge=1, description="Debe ser al menos 1 día.")
     link_pago: Optional[str] = None
     is_visible: bool = False
@@ -87,13 +109,14 @@ class CourseCreate(CourseBase):
 class CourseUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    image_url: Optional[str] = None
+    images: Optional[list[CourseImageBase]] = None
     duracion_dias: Optional[int] = None
     link_pago: Optional[str] = None
     is_visible: Optional[bool] = None
 
 class CourseResponse(CourseBase):
     id: int
+    images: list[CourseImageResponse] = []
     lessons: list[LessonResponse] = []
 
     class Config:
@@ -104,7 +127,7 @@ class CourseListResponse(BaseModel):
     id: int
     title: str
     description: Optional[str] = None
-    image_url: Optional[str] = None
+    images: list[CourseImageResponse] = []
     duracion_dias: int
     link_pago: Optional[str] = None
     is_visible: bool

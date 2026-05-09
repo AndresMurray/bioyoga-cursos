@@ -1,11 +1,24 @@
 import { useState, useCallback } from 'react';
 import { api } from '@/lib/api';
 
+export interface CourseImage {
+  id?: number;
+  course_id?: number;
+  url: string;
+}
+
+export interface LessonPdf {
+  id?: number;
+  lesson_id?: number;
+  title: string;
+  url: string;
+}
+
 export interface Course {
   id: number;
   title: string;
   description: string | null;
-  image_url: string | null;
+  images: CourseImage[];
   duracion_dias: number;
   link_pago: string | null;
   is_visible: boolean;
@@ -19,7 +32,7 @@ export interface Lesson {
   description: string | null;
   image_url: string | null;
   link_drive: string | null;
-  recursos_pdf: string[];
+  pdfs: LessonPdf[];
   order: number;
 }
 

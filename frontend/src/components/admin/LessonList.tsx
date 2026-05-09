@@ -44,9 +44,9 @@ export default function LessonList({ lessons, onEdit, onDelete }: LessonListProp
                     🔗 Link a Video/Drive
                   </span>
                 )}
-                {lesson.recursos_pdf && lesson.recursos_pdf.length > 0 && (
+                {lesson.pdfs && lesson.pdfs.length > 0 && (
                   <span className="text-primary flex items-center gap-1.5">
-                    📄 {lesson.recursos_pdf.length} recurso(s) PDF
+                    📄 {lesson.pdfs.length} recurso(s) PDF
                   </span>
                 )}
               </div>
