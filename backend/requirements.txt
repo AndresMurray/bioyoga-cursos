@@ -11,3 +11,4 @@ passlib[bcrypt]
 bcrypt==4.0.1
 httpx
 cloudinary
+alembic==1.18.4
