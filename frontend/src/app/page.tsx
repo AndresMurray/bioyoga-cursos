@@ -82,9 +82,6 @@ export default async function Home() {
                 </Button>
               </a>
               <a href="#">
-                <Button variant="outline" size="lg" className="text-base px-8">
-                  Contactar
-                </Button>
               </a>
             </div>
           </div>
