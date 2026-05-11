@@ -148,12 +148,14 @@ class HomeConfigBase(BaseModel):
     hero_subtitle_1: str
     hero_subtitle_2: str
     hero_image_url: str
+    whatsapp_number: str
 
 class HomeConfigUpdate(BaseModel):
     hero_title: Optional[str] = None
     hero_subtitle_1: Optional[str] = None
     hero_subtitle_2: Optional[str] = None
     hero_image_url: Optional[str] = None
+    whatsapp_number: Optional[str] = None
 
 class HomeConfigResponse(HomeConfigBase):
     id: int

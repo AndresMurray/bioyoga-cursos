@@ -4,6 +4,7 @@ import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Course } from '@/hooks/useCourses';
+import WhatsAppButton from '@/components/common/WhatsAppButton';
 
 async function getVisibleCourses(): Promise<Course[]> {
   try {
@@ -40,12 +41,15 @@ export default async function Home() {
     hero_title: "Pasión por el movimiento y la salud",
     hero_subtitle_1: "Hola, soy Lic. en Kinesiología. Mi objetivo es ayudarte a recuperar tu bienestar a través de técnicas innovadoras y un trato cercano y profesional.",
     hero_subtitle_2: "En este espacio no solo brindo atención personalizada, sino que también comparto mis conocimientos a través de cursos especializados para profesionales y estudiantes del área.",
-    hero_image_url: "/images/kinesiologist.png"
+    hero_image_url: "/images/kinesiologist.png",
+    whatsapp_number: "5491112345678"
   };
 
   return (
-    <div className="animate-fade">
-      <RedirectIfLoggedIn />
+    <>
+      <WhatsAppButton phoneNumber={heroData.whatsapp_number} />
+      <div className="animate-fade">
+        <RedirectIfLoggedIn />
       
       {/* Hero Section / Presentation */}
       <section id="sobre-mi" className="py-24 bg-background min-h-[80vh] flex items-center">
@@ -135,5 +139,6 @@ export default async function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }

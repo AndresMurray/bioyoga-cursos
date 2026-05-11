@@ -13,7 +13,8 @@ export default function HomeConfigForm() {
     hero_title: '',
     hero_subtitle_1: '',
     hero_subtitle_2: '',
-    hero_image_url: ''
+    hero_image_url: '',
+    whatsapp_number: ''
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -32,7 +33,8 @@ export default function HomeConfigForm() {
         hero_title: config.hero_title,
         hero_subtitle_1: config.hero_subtitle_1,
         hero_subtitle_2: config.hero_subtitle_2,
-        hero_image_url: config.hero_image_url
+        hero_image_url: config.hero_image_url,
+        whatsapp_number: config.whatsapp_number
       });
       setImagePreview(config.hero_image_url);
     }
@@ -155,6 +157,21 @@ export default function HomeConfigForm() {
             className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent min-h-[100px]"
             required
           />
+        </div>
+
+        <div className="pt-4 border-t border-border mt-6">
+          <h3 className="text-lg font-medium mb-4">Redes Sociales y Contacto</h3>
+          <Input 
+            label="Número de WhatsApp (con código de país, ej: 54911...)"
+            name="whatsapp_number"
+            value={formData.whatsapp_number}
+            onChange={handleChange}
+            placeholder="5491112345678"
+            required
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Este número se usará para el botón flotante de WhatsApp.
+          </p>
         </div>
 
         <div className="flex justify-end pt-4 border-t border-border">
