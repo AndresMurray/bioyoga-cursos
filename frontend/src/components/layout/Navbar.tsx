@@ -35,8 +35,8 @@ const Navbar = () => {
     <>
       <nav className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
         <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="font-outfit text-2xl font-bold tracking-tight text-foreground hover:text-primary transition-colors">
-            CENTRA
+          <Link href="/" className="flex items-center font-outfit text-2xl font-bold tracking-tight text-foreground hover:opacity-80 transition-opacity h-20">
+            <img src="/logo.png" alt="Centra Logo" className="h-16 w-auto object-contain mx-2" style={{ display: 'block' }} />
           </Link>
 
           <div className="flex items-center gap-6">

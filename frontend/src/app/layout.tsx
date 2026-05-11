@@ -6,6 +6,9 @@ import Footer from "@/components/layout/Footer";
 export const metadata: Metadata = {
   title: "Centra - Kinesiología y Cursos",
   description: "Sistema de gestión de cursos y atención kinesiológica profesional.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
