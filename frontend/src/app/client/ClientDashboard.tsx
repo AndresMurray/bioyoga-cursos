@@ -3,21 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import CourseCard from '@/components/courses/CourseCard';
 import { useMyCourses } from '@/hooks/useMyCourses';
+import { useCourses } from '@/hooks/useCourses';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/Badge';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState<'my-courses' | 'store' | 'profile'>('my-courses');
   const { user } = useAuth();
-  const { courses, loading, fetchMyCourses } = useMyCourses();
+  const { courses: myCourses, loading: loadingMy, fetchMyCourses } = useMyCourses();
+  const { courses: storeCourses, loading: loadingStore, fetchCourses } = useCourses();
 
   useEffect(() => {
     fetchMyCourses();
-  }, [fetchMyCourses]);
-
-  const availableCourses: any[] = [
-    // We could fetch these too, but for now let's keep it as is or empty
-  ];
+    fetchCourses(true); // only visible
+  }, [fetchMyCourses, fetchCourses]);
 
   return (
     <div className="animate-fade" style={{ minHeight: '80vh', padding: '4rem 0' }}>
@@ -75,14 +76,14 @@ const ClientDashboard = () => {
         {/* Tab Content */}
         {activeTab === 'my-courses' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-            {loading ? (
+            {loadingMy ? (
               <div className="text-center py-12 text-muted-foreground italic">Cargando tus cursos...</div>
-            ) : courses.length === 0 ? (
+            ) : myCourses.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground italic">
                 Aún no tienes cursos asignados. ¡Explora nuestra tienda!
               </div>
             ) : (
-              courses.map((course) => (
+              myCourses.map((course) => (
                 <div key={course.id} style={{
                   backgroundColor: 'white',
                   borderRadius: 'var(--radius)',
@@ -104,18 +105,11 @@ const ClientDashboard = () => {
                       </Badge>
                     </div>
                     
-                    <button style={{
-                      marginTop: 'auto',
-                      width: '100%',
-                      padding: '0.8rem',
-                      borderRadius: '0.8rem',
-                      backgroundColor: 'var(--primary)',
-                      color: 'white',
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}>
-                      Ingresar al Curso
-                    </button>
+                    <Link href={`/client/courses/${course.id}`} className="mt-auto">
+                      <Button className="w-full font-semibold">
+                        Ingresar al Curso
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               ))
@@ -124,13 +118,21 @@ const ClientDashboard = () => {
         )}
 
         {activeTab === 'store' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-            {availableCourses.map((course, i) => (
-              <CourseCard 
-                key={i}
-                course={course as any}
-              />
-            ))}
+          <div>
+            {loadingStore ? (
+              <div className="text-center py-12 text-muted-foreground italic">Cargando cursos...</div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+                {storeCourses
+                  .filter(course => !myCourses.some(myCourse => myCourse.id === course.id))
+                  .map((course) => (
+                  <CourseCard 
+                    key={course.id}
+                    course={course}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 

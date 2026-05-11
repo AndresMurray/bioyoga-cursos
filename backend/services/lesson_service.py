@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from repositories.lesson_repository import LessonRepository
 from repositories.course_repository import CourseRepository
+from repositories.enrollment_repository import EnrollmentRepository
 from models.schemas import LessonCreate, LessonUpdate
 
 
@@ -8,11 +9,26 @@ class LessonService:
     def __init__(self, db: Session):
         self.repository = LessonRepository(db)
         self.course_repository = CourseRepository(db)
+        self.enrollment_repository = EnrollmentRepository(db)
 
-    def list_lessons(self, course_id: int):
+    def list_lessons(self, course_id: int, user_id: int = None, is_admin: bool = False):
         course = self.course_repository.get_by_id(course_id)
         if not course:
             return None, "Curso no encontrado"
+            
+        # If not admin, check if user is enrolled
+        if not is_admin:
+            if not user_id:
+                return None, "Usuario no autenticado"
+            
+            enrollment = self.enrollment_repository.get_by_user_and_course(user_id, course_id)
+            if not enrollment or not enrollment.is_active:
+                return None, "No tenés acceso a este curso"
+                
+            from datetime import datetime, timezone
+            if enrollment.end_date < datetime.now(timezone.utc):
+                return None, "Tu acceso a este curso ha expirado"
+
         return self.repository.get_all_by_course(course_id), None
 
     def get_lesson(self, lesson_id: int):

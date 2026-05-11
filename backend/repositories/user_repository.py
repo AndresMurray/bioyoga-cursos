@@ -27,7 +27,7 @@ class UserRepository:
         return user
 
     def get_paginated_students(self, page: int, size: int, search: str = None):
-        query = self.db.query(User).filter(User.is_admin == False)
+        query = self.db.query(User).filter(User.is_admin.isnot(True))
         
         if search:
             search_filter = f"%{search}%"

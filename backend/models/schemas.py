@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 import re
 
@@ -131,12 +131,13 @@ class CourseListResponse(BaseModel):
     id: int
     title: str
     description: Optional[str] = None
-    images: list[CourseImageResponse] = []
+    images: list[CourseImageBase] = []
     duracion_dias: int
     link_pago: Optional[str] = None
     price: int = 0
     discount_percentage: int = 0
     is_visible: bool
+    end_date: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -165,7 +166,7 @@ class HomeConfigResponse(HomeConfigBase):
 
 # ── ENROLLMENT & STUDENT MANAGEMENT ──────────
 
-from datetime import datetime
+
 
 class EnrollmentResponse(BaseModel):
     id: int

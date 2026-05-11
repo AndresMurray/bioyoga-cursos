@@ -3,20 +3,28 @@ from sqlalchemy.orm import Session
 from database.session import get_db
 from models.schemas import LessonCreate, LessonUpdate, LessonResponse
 from services.lesson_service import LessonService
-from dependencies import require_admin
+from dependencies import require_admin, get_current_user, get_current_user_optional
 
 router = APIRouter(tags=["Lessons"])
 
 
 @router.get("/courses/{course_id}/lessons", response_model=list[LessonResponse])
-async def list_lessons(course_id: int, db: Session = Depends(get_db)):
+async def list_lessons(
+    course_id: int, 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user_optional)
+):
     """
-    Listar clases de un curso.
+    Listar clases de un curso. Requiere acceso (enrolamiento o admin).
     """
     service = LessonService(db)
-    lessons, error = service.list_lessons(course_id)
+    user_id = current_user.id if current_user else None
+    is_admin = current_user.is_admin if current_user else False
+    
+    lessons, error = service.list_lessons(course_id, user_id=user_id, is_admin=is_admin)
     if error:
-        raise HTTPException(status_code=404, detail=error)
+        status_code = 404 if "no encontrado" in error else 403
+        raise HTTPException(status_code=status_code, detail=error)
     return lessons
 
 

@@ -14,6 +14,7 @@ export function useLessons(courseId?: number) {
     setLoading(true);
     setError('');
     try {
+      console.log(`Fetching lessons from: /courses/${targetId}/lessons`);
       const data = await api.get(`/courses/${targetId}/lessons`);
       setLessons(data);
     } catch (err: any) {

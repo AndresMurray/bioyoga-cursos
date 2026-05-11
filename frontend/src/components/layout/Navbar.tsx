@@ -1,34 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import AuthModal from '../auth/AuthModal';
-import { api } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 
 const Navbar = () => {
   const [authModal, setAuthModal] = useState(false);
-  const [user, setUser] = useState<{ is_admin: boolean; first_name: string } | null>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      api.get('/auth/me')
-        .then(data => setUser(data))
-        .catch(() => {
-          localStorage.removeItem('token');
-          setUser(null);
-        })
-        .finally(() => setIsLoadingUser(false));
-    } else {
-      setIsLoadingUser(false);
-    }
-  }, []);
+  const { user, loading: isLoadingUser, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/';
+    logout();
   };
 
   return (

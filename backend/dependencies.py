@@ -35,3 +35,17 @@ def require_admin(current_user = Depends(get_current_user)):
             detail="The user doesn't have enough privileges"
         )
     return current_user
+
+def get_current_user_optional(token: str = Depends(OAuth2PasswordBearer(tokenUrl="auth/login", auto_error=False)), db: Session = Depends(get_db)):
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            return None
+    except JWTError:
+        return None
+    
+    repository = UserRepository(db)
+    return repository.get_by_email(email)
