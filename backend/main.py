@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.session import engine, Base
-from models import user, course, lesson, home_config as model_home_config
-from routes import auth, courses, lessons, uploads, home_config as route_home_config
+from models import user, course, lesson, home_config as model_home_config, enrollment
+from routes import auth, courses, lessons, uploads, home_config as route_home_config, students
 
 # Create tables
 # Base.metadata.create_all(bind=engine)  # Usamos Alembic para las migraciones en su lugar
@@ -23,6 +23,7 @@ app.include_router(courses.router)
 app.include_router(lessons.router)
 app.include_router(uploads.router)
 app.include_router(route_home_config.router)
+app.include_router(students.router)
 
 @app.get("/")
 async def root():

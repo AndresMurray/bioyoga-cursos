@@ -31,6 +31,7 @@ from models.user import User
 from models.course import Course
 from models.lesson import Lesson
 from models.home_config import HomeConfig
+from models.enrollment import Enrollment
 
 target_metadata = Base.metadata
 

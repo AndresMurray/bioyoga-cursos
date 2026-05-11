@@ -5,6 +5,7 @@ import { useCourses, Course } from '@/hooks/useCourses';
 import CourseList from '@/components/admin/CourseList';
 import CourseForm from '@/components/admin/CourseForm';
 import HomeConfigForm from '@/components/admin/HomeConfigForm';
+import StudentManagement from '@/components/admin/StudentManagement';
 import ConfirmModal from '@/components/common/ConfirmModal';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -148,45 +149,9 @@ const AdminDashboard = () => {
           <HomeConfigForm />
         )}
 
-        {/* Alumnos Tab (Mock for now) */}
+        {/* Alumnos Tab */}
         {activeTab === 'users' && (
-          <Card className="overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">Alumno</th>
-                    <th className="px-6 py-4 font-semibold">Cursos Activos</th>
-                    <th className="px-6 py-4 font-semibold text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-foreground">{user.name}</div>
-                        <div className="text-muted-foreground">{user.email}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          {user.activeCourses.length > 0 ? user.activeCourses.map((c, i) => (
-                            <Badge key={i} variant="secondary">{c}</Badge>
-                          )) : (
-                            <span className="text-muted-foreground italic">Ninguno</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Button variant="outline" size="sm">
-                          Gestionar Accesos
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          <StudentManagement />
         )}
       </div>
 

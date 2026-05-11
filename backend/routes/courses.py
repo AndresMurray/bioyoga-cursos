@@ -5,9 +5,21 @@ from models.schemas import (
     CourseCreate, CourseUpdate, CourseResponse, CourseListResponse
 )
 from services.course_service import CourseService
-from dependencies import require_admin
+from services.student_service import StudentService
+from dependencies import require_admin, get_current_user
 
 router = APIRouter(prefix="/courses", tags=["Courses"])
+
+@router.get("/my-courses", response_model=list[CourseListResponse])
+async def list_my_courses(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """
+    Lista de cursos en los que el usuario actual está inscripto.
+    """
+    service = StudentService(db)
+    return service.get_user_courses(current_user.id)
 
 
 @router.get("", response_model=list[CourseListResponse])

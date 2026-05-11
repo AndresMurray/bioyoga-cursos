@@ -162,3 +162,41 @@ class HomeConfigResponse(HomeConfigBase):
 
     class Config:
         from_attributes = True
+
+# ── ENROLLMENT & STUDENT MANAGEMENT ──────────
+
+from datetime import datetime
+
+class EnrollmentResponse(BaseModel):
+    id: int
+    user_id: int
+    course_id: int
+    start_date: datetime
+    end_date: datetime
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+class StudentCourseResponse(BaseModel):
+    id: int
+    title: str
+    end_date: datetime
+
+class StudentResponse(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+    dni: str
+    active_courses: list[StudentCourseResponse] = []
+
+    class Config:
+        from_attributes = True
+
+class PaginatedStudentsResponse(BaseModel):
+    total: int
+    page: int
+    size: int
+    pages: int
+    items: list[StudentResponse]

@@ -25,3 +25,22 @@ class UserRepository:
         self.db.commit()
         self.db.refresh(user)
         return user
+
+    def get_paginated_students(self, page: int, size: int, search: str = None):
+        query = self.db.query(User).filter(User.is_admin == False)
+        
+        if search:
+            search_filter = f"%{search}%"
+            query = query.filter(
+                (User.email.ilike(search_filter)) |
+                (User.first_name.ilike(search_filter)) |
+                (User.last_name.ilike(search_filter)) |
+                (User.dni.ilike(search_filter))
+            )
+            
+        total = query.count()
+        pages = (total + size - 1) // size
+        
+        items = query.offset((page - 1) * size).limit(size).all()
+        
+        return items, total, pages

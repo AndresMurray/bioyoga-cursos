@@ -1,44 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CourseCard from '@/components/courses/CourseCard';
+import { useMyCourses } from '@/hooks/useMyCourses';
+import { useAuth } from '@/hooks/useAuth';
+import { Badge } from '@/components/ui/Badge';
 
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState<'my-courses' | 'store' | 'profile'>('my-courses');
+  const { user } = useAuth();
+  const { courses, loading, fetchMyCourses } = useMyCourses();
 
-  const myCourses = [
-    {
-      title: "Kinesiología Deportiva Avanzada",
-      image: "/images/course1.png",
-      progress: 65,
-      lastAccessed: "2024-05-01"
-    }
-  ];
+  useEffect(() => {
+    fetchMyCourses();
+  }, [fetchMyCourses]);
 
   const availableCourses: any[] = [
-    {
-      id: 991,
-      title: "Rehabilitación Post-Quirúrgica",
-      images: [{ url: "/images/course1.png" }],
-      description: "Protocolos actualizados para la rehabilitación de cirugías de rodilla, cadera y columna.",
-      price: 12500,
-      discount_percentage: 0
-    },
-    {
-      id: 992,
-      title: "Vendaje Neuromuscular Pro",
-      images: [{ url: "/images/course1.png" }],
-      description: "Domina las aplicaciones de taping para diferentes patologías.",
-      price: 9800,
-      discount_percentage: 10
-    }
+    // We could fetch these too, but for now let's keep it as is or empty
   ];
 
   return (
     <div className="animate-fade" style={{ minHeight: '80vh', padding: '4rem 0' }}>
       <div className="container">
         <header style={{ marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Hola, Andrés 👋</h1>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Hola, {user?.first_name || 'Alumno'} 👋</h1>
           <p style={{ color: 'var(--muted-foreground)' }}>Bienvenido a tu panel personal de Centra.</p>
         </header>
 
@@ -90,38 +75,51 @@ const ClientDashboard = () => {
         {/* Tab Content */}
         {activeTab === 'my-courses' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-            {myCourses.map((course, i) => (
-              <div key={i} style={{
-                backgroundColor: 'white',
-                borderRadius: 'var(--radius)',
-                border: '1px solid var(--border)',
-                overflow: 'hidden'
-              }}>
-                <img src={course.image} alt={course.title} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
-                <div style={{ padding: '1.5rem' }}>
-                  <h3 style={{ marginBottom: '1rem' }}>{course.title}</h3>
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                      <span>Progreso</span>
-                      <span>{course.progress}%</span>
-                    </div>
-                    <div style={{ height: '8px', backgroundColor: 'var(--muted)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${course.progress}%`, height: '100%', backgroundColor: 'var(--primary)' }}></div>
-                    </div>
-                  </div>
-                  <button style={{
-                    width: '100%',
-                    padding: '0.8rem',
-                    borderRadius: '0.8rem',
-                    backgroundColor: 'var(--primary)',
-                    color: 'white',
-                    fontWeight: 600
-                  }}>
-                    Continuar Aprendiendo
-                  </button>
-                </div>
+            {loading ? (
+              <div className="text-center py-12 text-muted-foreground italic">Cargando tus cursos...</div>
+            ) : courses.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground italic">
+                Aún no tienes cursos asignados. ¡Explora nuestra tienda!
               </div>
-            ))}
+            ) : (
+              courses.map((course) => (
+                <div key={course.id} style={{
+                  backgroundColor: 'white',
+                  borderRadius: 'var(--radius)',
+                  border: '1px solid var(--border)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}>
+                  <img 
+                    src={course.images[0]?.url || '/images/course-placeholder.png'} 
+                    alt={course.title} 
+                    style={{ width: '100%', height: '180px', objectFit: 'cover' }} 
+                  />
+                  <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <h3 style={{ marginBottom: '0.5rem' }}>{course.title}</h3>
+                    <div style={{ marginBottom: '1.5rem', fontSize: '0.85rem' }}>
+                      <Badge variant="secondary" size="sm">
+                        Acceso hasta: {new Date(course.end_date).toLocaleDateString()}
+                      </Badge>
+                    </div>
+                    
+                    <button style={{
+                      marginTop: 'auto',
+                      width: '100%',
+                      padding: '0.8rem',
+                      borderRadius: '0.8rem',
+                      backgroundColor: 'var(--primary)',
+                      color: 'white',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}>
+                      Ingresar al Curso
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
