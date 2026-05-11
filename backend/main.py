@@ -5,7 +5,7 @@ from models import user, course, lesson, home_config as model_home_config
 from routes import auth, courses, lessons, uploads, home_config as route_home_config
 
 # Create tables
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)  # Usamos Alembic para las migraciones en su lugar
 
 app = FastAPI(title="Centra Kinesiología - Gestión de Cursos API")
 
