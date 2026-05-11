@@ -67,6 +67,8 @@ async def upload_pdf_endpoint(files: List[UploadFile] = File(...)):
                 detail=f"El archivo '{file.filename}' no es un PDF válido. Solo se admiten archivos .pdf."
             )
         try:
+            # Ensure the file pointer is at the beginning before uploading
+            await file.seek(0)
             url = await cloudinary_service.upload_pdf(file)
             urls.append(url)
         except Exception as e:
