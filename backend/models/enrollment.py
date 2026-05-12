@@ -19,4 +19,5 @@ class Enrollment(Base):
 
     # Relationships
     user = relationship("User", backref="enrollments")
-    course = relationship("Course", backref="enrollments")
+    course = relationship("Course", back_populates="enrollments")
+

@@ -40,5 +40,10 @@ class CourseService:
         if not course:
             return False, "Curso no encontrado"
 
+        if self.repository.has_active_enrollments(course_id):
+            return False, "No se puede eliminar el curso porque tiene alumnos con acceso habilitado. Primero debe dar de baja las inscripciones activas."
+
+
         self.repository.delete(course)
         return True, None
+

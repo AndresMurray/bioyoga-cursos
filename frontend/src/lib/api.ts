@@ -70,7 +70,14 @@ export const api = {
       const errorData = await response.json().catch(() => null);
       throw new Error(errorData?.detail || `Error: ${response.statusText}`);
     }
+    
+    if (response.status === 204) {
+      return null;
+    }
+    
     return response.json();
+
+
   },
 
   async upload(endpoint: string, formData: FormData) {
