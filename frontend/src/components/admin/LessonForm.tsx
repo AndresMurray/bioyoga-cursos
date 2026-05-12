@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { ImageCropper, validateImageFile, ALLOWED_IMAGE_EXTENSIONS, ALLOWED_IMAGE_LABEL } from '@/components/ui/ImageCropper';
 
 import { api } from '@/lib/api';
+import { downloadPdf } from '@/utils/downloadPdf';
+
 
 interface LessonFormProps {
   lesson?: Lesson | null;
@@ -270,9 +272,15 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
               <ul className="text-sm space-y-2">
                 {existingPdfs.map((pdf, i) => (
                   <li key={i} className="flex items-center justify-between bg-muted px-3 py-2 rounded-md">
-                    <a href={pdf.url} target="_blank" rel="noreferrer" className="text-primary hover:underline truncate max-w-[250px]" title={pdf.title}>
+                    <button 
+                      type="button"
+                      onClick={() => pdf.id && downloadPdf(pdf.id, pdf.title)}
+                      className="text-primary hover:underline truncate max-w-[250px] text-left" 
+                      title={pdf.title}
+                    >
                       {pdf.title}
-                    </a>
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => removeExistingPdf(i)}

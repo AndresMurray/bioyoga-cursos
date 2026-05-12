@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from models.lesson import Lesson, LessonPdf
 
@@ -17,6 +17,14 @@ class LessonRepository:
 
     def get_by_id(self, lesson_id: int):
         return self.db.query(Lesson).filter(Lesson.id == lesson_id).first()
+
+    def get_pdf_by_id(self, pdf_id: int):
+        return (
+            self.db.query(LessonPdf)
+            .options(joinedload(LessonPdf.lesson))
+            .filter(LessonPdf.id == pdf_id)
+            .first()
+        )
 
     def get_next_order(self, course_id: int) -> int:
         """Get the next order number for a new lesson in a course."""

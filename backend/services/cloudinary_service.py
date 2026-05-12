@@ -29,6 +29,7 @@ def is_configured() -> bool:
 
 import cloudinary
 import cloudinary.uploader
+import cloudinary.utils
 from fastapi import UploadFile
 
 if is_configured():
@@ -103,43 +104,74 @@ async def delete_file(public_id: str, resource_type: str = "image") -> bool:
     return result.get("result") == "ok"
 
 
-def extract_public_id(url: str, resource_type: str = "image") -> str:
+def extract_cloudinary_info(url: str) -> tuple[str, str, str]:
     """
-    Extrae el public_id de una URL de Cloudinary.
-
-    - Para `resource_type="image"` o `"video"`: el public_id NO incluye extensión.
-    - Para `resource_type="raw"`: el public_id PUEDE/DEBE incluir extensión (ej `.pdf`).
-
-    Ejemplos:
-    - https://res.cloudinary.com/xxx/image/upload/v123/centra/images/abc123.jpg
-      -> centra/images/abc123
-    - https://res.cloudinary.com/xxx/raw/upload/v123/centra/pdfs/file-1a2b3c4d.pdf
-      -> centra/pdfs/file-1a2b3c4d.pdf
+    Extracts (public_id, resource_type, delivery_type) from a Cloudinary URL.
+    resource_type: image, raw, video
+    delivery_type: upload, authenticated, private
     """
     from urllib.parse import urlparse
     import re
 
     path = (urlparse(url).path or "").strip("/")
     if not path:
-        return ""
+        return "", "image", "upload"
 
     parts = [p for p in path.split("/") if p]
-    try:
-        upload_idx = parts.index("upload")
-    except ValueError:
-        return ""
+    
+    # Cloudinary segments: .../<resource_type>/<delivery_type>/...
+    # Known resource types
+    resource_types = {"image", "raw", "video"}
+    # Known delivery types
+    delivery_types = {"upload", "authenticated", "private", "authenticated_raw", "multi"}
+    
+    res_type = "image"
+    del_type = "upload"
+    type_idx = -1
+    
+    # Search for delivery type first as it's the most reliable anchor
+    for i, part in enumerate(parts):
+        if part in delivery_types:
+            type_idx = i
+            del_type = part
+            # The part immediately before the delivery type is usually the resource type
+            if i > 0 and parts[i-1] in resource_types:
+                res_type = parts[i-1]
+            break
+            
+    if type_idx == -1:
+        return "", "image", "upload"
 
-    rest = parts[upload_idx + 1 :]
-    if rest and re.fullmatch(r"v\d+", rest[0]):
+    rest = parts[type_idx + 1 :]
+    # Skip version (v1234567)
+    if rest and (re.fullmatch(r"v\d+", rest[0]) or rest[0].isdigit()):
         rest = rest[1:]
 
     if not rest:
-        return ""
+        return "", res_type, del_type
 
     public_id = "/".join(rest)
-    if resource_type in {"image", "video"}:
+
+    
+    # For images and videos, Cloudinary handles public_id WITHOUT extension
+    if res_type in {"image", "video"}:
         public_id = re.sub(r"\.[^.]+$", "", public_id)
-    return public_id
+    
+    return public_id, res_type, del_type
+
+
+def extract_public_id_with_type(url: str, resource_type: str = "image") -> tuple[str, str]:
+    """Legacy helper for backward compatibility."""
+    pid, _, dtype = extract_cloudinary_info(url)
+    return pid, dtype
+
+
+def extract_public_id(url: str, resource_type: str = "image") -> str:
+    """Legacy helper."""
+    pid, _, _ = extract_cloudinary_info(url)
+    return pid
+
+
 
 
 async def delete_image_by_url(url: str) -> bool:
@@ -156,3 +188,30 @@ async def delete_pdf_by_url(url: str) -> bool:
     if not public_id:
         return False
     return await delete_file(public_id, resource_type="raw")
+
+
+def build_signed_url(public_id: str, resource_type: str = "image", delivery_type: str = "upload") -> str:
+    """Build a signed Cloudinary delivery URL for any asset.
+    """
+    if not is_configured():
+        raise Exception("Cloudinary no está configurado.")
+
+    url, _ = cloudinary.utils.cloudinary_url(
+        public_id,
+        resource_type=resource_type,
+        type=delivery_type,
+        secure=True,
+        sign_url=True,
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
+    )
+    return url
+
+
+def build_signed_raw_url(public_id: str, delivery_type: str = "upload") -> str:
+    """Legacy helper."""
+    return build_signed_url(public_id, resource_type="raw", delivery_type=delivery_type)
+
+
+
