@@ -9,7 +9,7 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL", "[EMAIL_ADDRESS]")
 SENDER_NAME = os.getenv("SENDER_NAME", "Centra Kinesiología")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-async def send_validation_email(email: str, first_name: str, token: str):
+async def send_validation_email(email: str, first_name: str, token: str, frontend_url: str = None):
     url = "https://api.brevo.com/v3/smtp/email"
     headers = {
         "accept": "application/json",
@@ -17,7 +17,9 @@ async def send_validation_email(email: str, first_name: str, token: str):
         "content-type": "application/json"
     }
     
-    validation_link = f"{FRONTEND_URL}/validate?token={token}"
+    # Prioritize provided frontend_url (from request origin), fallback to env var
+    base_url = (frontend_url or FRONTEND_URL or "http://localhost:3000").rstrip('/')
+    validation_link = f"{base_url}/validate?token={token}"
     
     payload = {
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
