@@ -71,7 +71,7 @@ const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ student, onClose, onE
                     <div>
                       <div className="font-semibold flex items-center gap-2">
                         {course.title}
-                        {enrolled && <Badge variant="primary" size="sm">Activo</Badge>}
+                        {enrolled && <Badge variant="primary">Activo</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Duración: {course.duracion_dias} días
