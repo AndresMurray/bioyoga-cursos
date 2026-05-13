@@ -17,7 +17,7 @@ const ClientDashboard = () => {
 
   useEffect(() => {
     fetchMyCourses();
-    fetchCourses(true); // only visible
+    fetchCourses(); // only visible
   }, [fetchMyCourses, fetchCourses]);
 
   return (
