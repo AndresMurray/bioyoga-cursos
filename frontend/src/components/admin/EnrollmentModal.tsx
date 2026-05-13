@@ -71,7 +71,7 @@ const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ student, onClose, onE
                     <div>
                       <div className="font-semibold flex items-center gap-2">
                         {course.title}
-                        {enrolled && <Badge variant="primary">Activo</Badge>}
+                        {enrolled && <Badge variant="success">Activo</Badge>}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Duración: {course.duracion_dias} días
@@ -79,7 +79,7 @@ const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ student, onClose, onE
                     </div>
                     <Button 
                       size="sm" 
-                      variant={enrolled ? "outline" : "primary"}
+                      variant={enrolled ? "outline" : "default"}
                       onClick={() => enrolled ? handleUnenroll(course.id) : handleEnroll(course.id)}
                       disabled={isSubmitting}
                       className={enrolled ? "text-red-500 border-red-200 hover:bg-red-50" : ""}
