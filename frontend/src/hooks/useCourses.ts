@@ -43,11 +43,12 @@ export function useCourses() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchCourses = useCallback(async () => {
+  const fetchCourses = useCallback(async (onlyVisible: boolean = false) => {
     setLoading(true);
     setError('');
     try {
-      const data = await api.get('/courses');
+      const url = onlyVisible ? '/courses?visible_only=true' : '/courses';
+      const data = await api.get(url);
       setCourses(data);
     } catch (err: any) {
       setError(err.message);
