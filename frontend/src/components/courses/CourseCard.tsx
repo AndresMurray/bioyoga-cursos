@@ -1,13 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { PriceDisplay } from '@/components/ui/PriceDisplay';
 import { ImageCarousel } from '@/components/ui/ImageCarousel';
 import AuthModal from '@/components/auth/AuthModal';
+import PurchaseConfirmationModal from '@/components/courses/PurchaseConfirmationModal';
 import { Course } from '@/hooks/useCourses';
+import { useHomeConfig } from '@/hooks/useHomeConfig';
+import { api } from '@/lib/api';
+import Link from 'next/link';
 
 interface CourseCardProps {
   course: Course;
@@ -16,6 +20,13 @@ interface CourseCardProps {
 const CourseCard = ({ course }: CourseCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showAlreadyPurchased, setShowAlreadyPurchased] = useState(false);
+  const { config, fetchConfig } = useHomeConfig();
+
+  useEffect(() => {
+    fetchConfig();
+  }, [fetchConfig]);
 
   const images = course.images && course.images.length > 0 
     ? course.images.map(img => img.url) 
@@ -23,16 +34,36 @@ const CourseCard = ({ course }: CourseCardProps) => {
 
   const coverImage = images[0];
 
-  const handleBuyClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent opening the course modal if clicked from outside
+  const checkOwnershipAndPurchase = async () => {
+    try {
+      const myCourses = await api.get('/courses/my-courses');
+      const alreadyOwned = myCourses.some((c: any) => c.id === course.id);
+      if (alreadyOwned) {
+        setShowAlreadyPurchased(true);
+      } else {
+        if (course.link_pago) {
+          window.open(course.link_pago, '_blank');
+        }
+        setShowPurchaseModal(true);
+      }
+    } catch {
+      // If check fails (e.g. token invalid), proceed with purchase
+      if (course.link_pago) {
+        window.open(course.link_pago, '_blank');
+      }
+      setShowPurchaseModal(true);
+    }
+  };
+
+  const handleBuyClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     const token = localStorage.getItem('token');
     if (token) {
-      // User is logged in, redirect to client dashboard or checkout
-      window.location.href = '/client';
+      setShowModal(false);
+      await checkOwnershipAndPurchase();
     } else {
       // Prompt login/register
       setShowAuthModal(true);
-      // Close the course details modal if it was open
       setShowModal(false); 
     }
   };
@@ -111,8 +142,58 @@ const CourseCard = ({ course }: CourseCardProps) => {
       <AuthModal 
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)} 
-        initialMode="register" 
+        contextMessage="Para comprar un curso primero debés iniciar sesión. Si no tenés cuenta, registrate."
+        onLoginSuccess={async () => {
+          try {
+            const myCourses = await api.get('/courses/my-courses');
+            const alreadyOwned = myCourses.some((c: any) => c.id === course.id);
+            if (alreadyOwned) {
+              sessionStorage.setItem('pendingPurchase', JSON.stringify({ alreadyOwned: true, courseTitle: course.title }));
+            } else {
+              if (course.link_pago) {
+                window.open(course.link_pago, '_blank');
+              }
+              sessionStorage.setItem('pendingPurchase', JSON.stringify({ alreadyOwned: false, courseTitle: course.title }));
+            }
+          } catch {
+            if (course.link_pago) {
+              window.open(course.link_pago, '_blank');
+            }
+            sessionStorage.setItem('pendingPurchase', JSON.stringify({ alreadyOwned: false, courseTitle: course.title }));
+          }
+          window.location.href = '/client';
+        }}
       />
+
+      <PurchaseConfirmationModal
+        isOpen={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+        whatsappNumber={config?.whatsapp_number || ''}
+        courseTitle={course.title}
+      />
+
+      {/* Already purchased modal */}
+      <Modal isOpen={showAlreadyPurchased} onClose={() => setShowAlreadyPurchased(false)} className="max-w-md p-8">
+        <div className="flex flex-col items-center text-center">
+          <div className="text-5xl mb-5">✅</div>
+          <h3 className="text-2xl font-bold text-primary mb-4">¡Ya tenés este curso!</h3>
+          <p className="text-muted-foreground mb-8 leading-relaxed">
+            Ya tenés comprado el curso <strong className="text-foreground">{course.title}</strong>. Accedé al mismo desde <strong className="text-foreground">Mis Cursos</strong>.
+          </p>
+          <Link href="/client" className="w-full">
+            <Button className="w-full mb-3">
+              Ir a Mis Cursos
+            </Button>
+          </Link>
+          <Button
+            variant="secondary"
+            onClick={() => setShowAlreadyPurchased(false)}
+            className="w-full"
+          >
+            Cerrar
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 };

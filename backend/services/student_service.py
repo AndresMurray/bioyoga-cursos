@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from repositories.user_repository import UserRepository
 from repositories.enrollment_repository import EnrollmentRepository
 from repositories.course_repository import CourseRepository
+from services.email_service import send_enrollment_email
 from datetime import datetime, timedelta
 
 class StudentService:
@@ -42,7 +43,7 @@ class StudentService:
             "items": student_items
         }
 
-    def enroll_student(self, user_id: int, course_id: int):
+    async def enroll_student(self, user_id: int, course_id: int):
         course = self.course_repo.get_by_id(course_id)
         if not course:
             return None, "Curso no encontrado"
@@ -66,7 +67,20 @@ class StudentService:
                 "is_active": True
             }
             enrollment = self.enrollment_repo.create(enrollment_data)
-            
+
+        # Send enrollment notification email (non-blocking)
+        user = self.user_repo.get_by_id(user_id)
+        if user:
+            try:
+                await send_enrollment_email(
+                    email=user.email,
+                    first_name=user.first_name,
+                    course_title=course.title,
+                    duration_days=course.duracion_dias
+                )
+            except Exception as e:
+                print(f"[WARNING] No se pudo enviar el email de inscripción: {e}")
+
         return enrollment, None
 
     def unenroll_student(self, user_id: int, course_id: int):

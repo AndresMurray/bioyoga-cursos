@@ -11,10 +11,12 @@ import { Button } from '@/components/ui/Button';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialMode?: 'login' | 'register'; 
+  initialMode?: 'login' | 'register';
+  onLoginSuccess?: () => void;
+  contextMessage?: string;
 }
 
-export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onLoginSuccess, contextMessage }: AuthModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -47,8 +49,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       const response = await api.post('/auth/login', { email: formData.email, password: formData.password });
       localStorage.setItem('token', response.access_token);
       
-      const user = await api.get('/auth/me');
-      window.location.href = user.is_admin ? '/admin' : '/client';
+      if (onLoginSuccess) {
+        onClose();
+        onLoginSuccess();
+      } else {
+        const user = await api.get('/auth/me');
+        window.location.href = user.is_admin ? '/admin' : '/client';
+      }
     } catch (err: any) {
       setErrorMsg(err.message || 'Ocurrió un error inesperado al iniciar sesión.');
     } finally {
@@ -62,6 +69,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <h2 className="text-3xl font-semibold text-primary mb-2">¡Bienvenido!</h2>
         <p className="text-sm text-muted-foreground">Ingresá para acceder a tus cursos</p>
       </div>
+
+      {contextMessage && (
+        <div className="mb-4 p-3 bg-primary/5 border border-primary/20 text-foreground rounded-lg text-sm text-center leading-relaxed">
+          {contextMessage}
+        </div>
+      )}
 
       {errorMsg && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center">

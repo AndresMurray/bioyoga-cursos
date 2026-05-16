@@ -5,20 +5,42 @@ import CourseCard from '@/components/courses/CourseCard';
 import { useMyCourses } from '@/hooks/useMyCourses';
 import { useCourses } from '@/hooks/useCourses';
 import { useAuth } from '@/hooks/useAuth';
+import { useHomeConfig } from '@/hooks/useHomeConfig';
 import { Badge } from '@/components/ui/Badge';
+import { Modal } from '@/components/ui/Modal';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import PurchaseConfirmationModal from '@/components/courses/PurchaseConfirmationModal';
 
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState<'my-courses' | 'store' | 'profile'>('my-courses');
   const { user } = useAuth();
   const { courses: myCourses, loading: loadingMy, fetchMyCourses } = useMyCourses();
   const { courses: storeCourses, loading: loadingStore, fetchCourses } = useCourses();
+  const { config, fetchConfig } = useHomeConfig();
+
+  // Pending purchase modal state (from login-then-buy flow)
+  const [pendingPurchaseTitle, setPendingPurchaseTitle] = useState<string | null>(null);
+  const [pendingAlreadyOwned, setPendingAlreadyOwned] = useState(false);
 
   useEffect(() => {
     fetchMyCourses();
     fetchCourses(true); // only visible
-  }, [fetchMyCourses, fetchCourses]);
+    fetchConfig();
+  }, [fetchMyCourses, fetchCourses, fetchConfig]);
+
+  // Check for pending purchase from sessionStorage (login-then-buy flow)
+  useEffect(() => {
+    const raw = sessionStorage.getItem('pendingPurchase');
+    if (raw) {
+      sessionStorage.removeItem('pendingPurchase');
+      try {
+        const data = JSON.parse(raw);
+        setPendingPurchaseTitle(data.courseTitle);
+        setPendingAlreadyOwned(data.alreadyOwned);
+      } catch {}
+    }
+  }, []);
 
   return (
     <div className="animate-fade" style={{ minHeight: '80vh', padding: '4rem 0' }}>
@@ -179,6 +201,34 @@ const ClientDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Pending purchase modals (from login-then-buy flow) */}
+      {pendingPurchaseTitle && !pendingAlreadyOwned && (
+        <PurchaseConfirmationModal
+          isOpen={true}
+          onClose={() => setPendingPurchaseTitle(null)}
+          whatsappNumber={config?.whatsapp_number || ''}
+          courseTitle={pendingPurchaseTitle}
+        />
+      )}
+
+      {pendingPurchaseTitle && pendingAlreadyOwned && (
+        <Modal isOpen={true} onClose={() => setPendingPurchaseTitle(null)} className="max-w-md p-8">
+          <div className="flex flex-col items-center text-center">
+            <div className="text-5xl mb-5">✅</div>
+            <h3 className="text-2xl font-bold text-primary mb-4">¡Ya tenés este curso!</h3>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              Ya tenés comprado el curso <strong className="text-foreground">{pendingPurchaseTitle}</strong>. Accedé al mismo desde <strong className="text-foreground">Mis Cursos</strong>.
+            </p>
+            <Button
+              onClick={() => { setPendingPurchaseTitle(null); setActiveTab('my-courses'); }}
+              className="w-full"
+            >
+              Ir a Mis Cursos
+            </Button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

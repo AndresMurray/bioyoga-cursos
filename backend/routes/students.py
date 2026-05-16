@@ -26,7 +26,7 @@ async def enroll_student(
     current_user = Depends(require_admin)
 ):
     service = StudentService(db)
-    enrollment, error = service.enroll_student(user_id, course_id)
+    enrollment, error = await service.enroll_student(user_id, course_id)
     if error:
         raise HTTPException(status_code=400, detail=error)
     return enrollment
