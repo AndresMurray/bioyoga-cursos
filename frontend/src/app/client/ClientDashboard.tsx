@@ -122,7 +122,7 @@ const ClientDashboard = () => {
                   <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <h3 style={{ marginBottom: '0.5rem' }}>{course.title}</h3>
                     <div style={{ marginBottom: '1.5rem', fontSize: '0.85rem' }}>
-                      <Badge variant="secondary" size="sm">
+                      <Badge variant="secondary">
                         Acceso hasta: {new Date(course.end_date).toLocaleDateString()}
                       </Badge>
                     </div>

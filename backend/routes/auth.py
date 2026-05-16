@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from database.session import get_db
 from models.schemas import UserCreate, UserResponse, LoginRequest, Token
@@ -9,9 +9,10 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=UserResponse)
-async def register(user_in: UserCreate, db: Session = Depends(get_db)):
+async def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db)):
+    origin = request.headers.get("origin")
     auth_service = AuthService(db)
-    user, error = await auth_service.register_user(user_in)
+    user, error = await auth_service.register_user(user_in, frontend_url=origin)
 
     if error:
         raise HTTPException(status_code=400, detail=error)

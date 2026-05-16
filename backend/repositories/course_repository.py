@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.course import Course, CourseImage
+from models.enrollment import Enrollment
 
 
 class CourseRepository:
@@ -44,3 +45,11 @@ class CourseRepository:
     def delete(self, course: Course):
         self.db.delete(course)
         self.db.commit()
+
+    def has_active_enrollments(self, course_id: int) -> bool:
+        return self.db.query(Enrollment).filter(
+            Enrollment.course_id == course_id,
+            Enrollment.is_active == True
+        ).first() is not None
+
+

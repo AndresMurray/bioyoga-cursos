@@ -7,13 +7,16 @@ import CourseForm from '@/components/admin/CourseForm';
 import HomeConfigForm from '@/components/admin/HomeConfigForm';
 import StudentManagement from '@/components/admin/StudentManagement';
 import ConfirmModal from '@/components/common/ConfirmModal';
+import NotificationModal, { NotificationType } from '@/components/common/NotificationModal';
+
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<'courses' | 'users' | 'home_config'>('courses');
-  const { courses, loading, fetchCourses, createCourse, updateCourse, deleteCourse } = useCourses();
+  const { courses, loading, error, fetchCourses, createCourse, updateCourse, deleteCourse } = useCourses();
+
   
   // Modals state
   const [isCourseFormOpen, setIsCourseFormOpen] = useState(false);
@@ -22,6 +25,19 @@ const AdminDashboard = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: NotificationType;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+  });
+
 
   // Mock data for users tab (to be implemented later)
   const [users] = useState([
@@ -73,10 +89,30 @@ const AdminDashboard = () => {
     if (success) {
       setIsDeleteModalOpen(false);
       setCourseToDelete(null);
+      setNotification({
+        isOpen: true,
+        title: '¡Éxito!',
+        message: 'Curso eliminado correctamente.',
+        type: 'success'
+      });
     } else {
-      alert("Error al eliminar el curso.");
+      // El error se manejará en el useEffect
     }
   };
+
+  // Efecto para mostrar alertas de error
+  useEffect(() => {
+    if (error && !loading) {
+      setNotification({
+        isOpen: true,
+        title: 'Error',
+        message: error,
+        type: 'error'
+      });
+    }
+  }, [error, loading]);
+
+
 
   return (
     <div className="animate-fade min-h-[80vh] py-16">
@@ -178,6 +214,15 @@ const AdminDashboard = () => {
         }}
         isLoading={isDeleting}
       />
+
+      <NotificationModal
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+      />
+
     </div>
   );
 };

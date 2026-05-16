@@ -88,4 +88,6 @@ async def delete_course(
     service = CourseService(db)
     success, error = service.delete_course(course_id)
     if error:
-        raise HTTPException(status_code=404, detail=error)
+        status_code = status.HTTP_404_NOT_FOUND if "no encontrado" in error.lower() else status.HTTP_400_BAD_REQUEST
+        raise HTTPException(status_code=status_code, detail=error)
+

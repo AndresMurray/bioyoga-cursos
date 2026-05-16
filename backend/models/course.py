@@ -34,3 +34,5 @@ class Course(Base):
     # Relationship
     images = relationship("CourseImage", back_populates="course", cascade="all, delete-orphan")
     lessons = relationship("Lesson", back_populates="course", cascade="all, delete-orphan", order_by="Lesson.order")
+    enrollments = relationship("Enrollment", back_populates="course", cascade="all, delete-orphan", passive_deletes=True)
+

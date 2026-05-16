@@ -22,7 +22,7 @@ class AuthService:
     def __init__(self, db: Session):
         self.repository = UserRepository(db)
 
-    async def register_user(self, user_in: UserCreate):
+    async def register_user(self, user_in: UserCreate, frontend_url: str = None):
         if self.repository.get_by_email(user_in.email):
             return None, "El email ya está registrado"
 
@@ -41,7 +41,7 @@ class AuthService:
 
         # Send validation email (non-blocking: registration succeeds even if email fails)
         try:
-            await send_validation_email(user.email, user.first_name, validation_token)
+            await send_validation_email(user.email, user.first_name, validation_token, frontend_url=frontend_url)
         except Exception as e:
             print(f"[WARNING] No se pudo enviar el email de validación: {e}")
 

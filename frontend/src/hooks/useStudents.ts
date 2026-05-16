@@ -3,7 +3,7 @@ import { api } from '@/lib/api';
 
 export interface StudentCourse {
   id: number;
-  title: str;
+  title: string;
   end_date: string;
 }
 

@@ -8,6 +8,8 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import LessonList from '@/components/admin/LessonList';
 import LessonForm from '@/components/admin/LessonForm';
 import ConfirmModal from '@/components/common/ConfirmModal';
+import NotificationModal, { NotificationType } from '@/components/common/NotificationModal';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -31,6 +33,19 @@ export default function CourseDetailsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [lessonToDelete, setLessonToDelete] = useState<Lesson | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: NotificationType;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+  });
+
 
   useEffect(() => {
     if (isNaN(courseId)) {
@@ -95,10 +110,22 @@ export default function CourseDetailsPage() {
     if (success) {
       setIsDeleteModalOpen(false);
       setLessonToDelete(null);
+      setNotification({
+        isOpen: true,
+        title: '¡Éxito!',
+        message: 'Clase eliminada correctamente.',
+        type: 'success'
+      });
     } else {
-      alert("Error al eliminar la clase.");
+      setNotification({
+        isOpen: true,
+        title: 'Error',
+        message: 'No se pudo eliminar la clase.',
+        type: 'error'
+      });
     }
   };
+
 
   if (courseLoading) {
     return (
@@ -202,6 +229,16 @@ export default function CourseDetailsPage() {
           }}
           isLoading={isDeleting}
         />
+
+
+      <NotificationModal
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
+      />
+
       </div>
     </ProtectedRoute>
   );

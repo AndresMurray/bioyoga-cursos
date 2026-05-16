@@ -107,7 +107,7 @@ const StudentManagement = () => {
                       <div className="flex flex-wrap gap-2">
                         {student.active_courses.length > 0 ? (
                           student.active_courses.map((course) => (
-                            <Badge key={course.id} variant="secondary" size="sm">
+                            <Badge key={course.id} variant="secondary">
                               {course.title}
                             </Badge>
                           ))
