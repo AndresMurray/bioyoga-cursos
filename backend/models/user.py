@@ -22,6 +22,8 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     
     validation_token = Column(String, nullable=True)
+    reset_password_token = Column(String, nullable=True)
+    reset_password_expires = Column(DateTime(timezone=True), nullable=True)
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

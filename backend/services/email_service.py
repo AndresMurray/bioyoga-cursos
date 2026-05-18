@@ -89,3 +89,41 @@ async def send_enrollment_email(email: str, first_name: str, course_title: str, 
             print(f"Error sending enrollment email: {response.text}")
             return False
         return True
+
+async def send_password_reset_email(email: str, first_name: str, token: str):
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+
+    payload = {
+        "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
+        "to": [{"email": email, "name": first_name}],
+        "subject": "Recupera tu contraseña - Centra Kinesiología",
+        "htmlContent": f"""
+            <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #4a3f35;">
+                    <h2 style="color: #f8b4a6;">¡Hola {first_name}!</h2>
+                    <p>Recibimos una solicitud para restablecer tu contraseña en Centra Kinesiología.</p>
+                    <p>Ingresa el siguiente código de 6 dígitos en la pantalla para cambiar tu contraseña. <strong>Este código es válido por 2 minutos.</strong></p>
+                    <div style="background-color: #fdf2f0; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+                        <p style="font-size: 24px; font-weight: bold; letter-spacing: 4px; margin: 0; color: #f8b4a6;">
+                            {token}
+                        </p>
+                    </div>
+                    <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
+                    <br>
+                    <p>Saludos,<br>El equipo de Centra</p>
+                </body>
+            </html>
+        """
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, headers=headers, json=payload)
+        if response.status_code != 201:
+            print(f"Error sending password reset email: {response.text}")
+            return False
+        return True

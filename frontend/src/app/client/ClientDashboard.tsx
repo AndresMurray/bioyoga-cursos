@@ -11,10 +11,12 @@ import { Modal } from '@/components/ui/Modal';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import PurchaseConfirmationModal from '@/components/courses/PurchaseConfirmationModal';
+import { api } from '@/lib/api';
+import { Input } from '@/components/ui/Input';
 
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState<'my-courses' | 'store' | 'profile'>('my-courses');
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { courses: myCourses, loading: loadingMy, fetchMyCourses } = useMyCourses();
   const { courses: storeCourses, loading: loadingStore, fetchCourses } = useCourses();
   const { config, fetchConfig } = useHomeConfig();
@@ -22,6 +24,35 @@ const ClientDashboard = () => {
   // Pending purchase modal state (from login-then-buy flow)
   const [pendingPurchaseTitle, setPendingPurchaseTitle] = useState<string | null>(null);
   const [pendingAlreadyOwned, setPendingAlreadyOwned] = useState(false);
+
+  // Change password state
+  const [pwdData, setPwdData] = useState({ current: '', newPwd: '' });
+  const [pwdError, setPwdError] = useState('');
+  const [pwdSuccess, setPwdSuccess] = useState('');
+  const [isChangingPwd, setIsChangingPwd] = useState(false);
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdError('');
+    setPwdSuccess('');
+    if (pwdData.newPwd.length < 6) {
+      setPwdError('La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    setIsChangingPwd(true);
+    try {
+      const response = await api.post('/auth/change-password', {
+        current_password: pwdData.current,
+        new_password: pwdData.newPwd
+      });
+      setPwdSuccess(response.message || 'Contraseña actualizada.');
+      setPwdData({ current: '', newPwd: '' });
+    } catch (err: any) {
+      setPwdError(err.message || 'Error al cambiar contraseña.');
+    } finally {
+      setIsChangingPwd(false);
+    }
+  };
 
   useEffect(() => {
     fetchMyCourses();
@@ -170,31 +201,55 @@ const ClientDashboard = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.9rem', color: 'var(--muted-foreground)' }}>Nombre</label>
-                <input type="text" defaultValue="Andrés Murray" style={{
-                  padding: '0.8rem', borderRadius: '0.8rem', border: '1px solid var(--border)'
+                <input type="text" defaultValue={user ? `${user.first_name} ${user.last_name}` : ''} disabled style={{
+                  padding: '0.8rem', borderRadius: '0.8rem', border: '1px solid var(--border)', backgroundColor: 'var(--muted)'
                 }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.9rem', color: 'var(--muted-foreground)' }}>Email</label>
-                <input type="email" defaultValue="andres@email.com" disabled style={{
+                <input type="email" defaultValue={user?.email || ''} disabled style={{
                   padding: '0.8rem', borderRadius: '0.8rem', border: '1px solid var(--border)', backgroundColor: 'var(--muted)'
                 }} />
               </div>
-              <button style={{
-                marginTop: '1rem',
-                padding: '1rem',
-                borderRadius: 'var(--radius)',
-                backgroundColor: 'var(--primary)',
-                color: 'white',
-                fontWeight: 600,
-                width: 'fit-content'
-              }}>
-                Guardar Cambios
-              </button>
             </div>
             
             <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
-              <button style={{ color: '#d9534f', fontWeight: 600, background: 'none' }}>
+              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: 600 }}>Cambiar Contraseña</h3>
+              
+              {pwdSuccess && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
+                  {pwdSuccess}
+                </div>
+              )}
+              {pwdError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+                  {pwdError}
+                </div>
+              )}
+
+              <form onSubmit={handlePasswordChange} className="flex flex-col gap-4">
+                <Input 
+                  label="Contraseña Actual" 
+                  type="password" 
+                  value={pwdData.current}
+                  onChange={(e) => setPwdData(p => ({ ...p, current: e.target.value }))}
+                  required
+                />
+                <Input 
+                  label="Nueva Contraseña" 
+                  type="password" 
+                  value={pwdData.newPwd}
+                  onChange={(e) => setPwdData(p => ({ ...p, newPwd: e.target.value }))}
+                  required
+                />
+                <Button type="submit" disabled={isChangingPwd} className="w-fit mt-2">
+                  {isChangingPwd ? 'Guardando...' : 'Cambiar Contraseña'}
+                </Button>
+              </form>
+            </div>
+
+            <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
+              <button onClick={logout} style={{ color: '#d9534f', fontWeight: 600, background: 'none' }}>
                 Cerrar Sesión
               </button>
             </div>

@@ -17,6 +17,9 @@ class UserRepository:
     def get_by_validation_token(self, token: str):
         return self.db.query(User).filter(User.validation_token == token).first()
 
+    def get_by_reset_token(self, token: str):
+        return self.db.query(User).filter(User.reset_password_token == token).first()
+
     def create(self, user_data: dict):
         db_user = User(**user_data)
         self.db.add(db_user)

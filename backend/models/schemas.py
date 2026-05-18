@@ -43,8 +43,19 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
 
-# ── Course Schemas ──────────────────────────────
+class PasswordResetConfirm(BaseModel):
+    token: str
+    new_password: str = Field(..., min_length=6, description="La contraseña debe tener al menos 6 caracteres.")
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=6, description="La contraseña debe tener al menos 6 caracteres.")
+
+
+# 🎯🎯 Course Schemas 🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯🎯──────────────────────────────
 
 class LessonPdfBase(BaseModel):
     title: str

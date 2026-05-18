@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from database.session import get_db
-from models.schemas import UserCreate, UserResponse, LoginRequest, Token
+from models.schemas import UserCreate, UserResponse, LoginRequest, Token, PasswordResetRequest, PasswordResetConfirm, PasswordChange
 from services.auth_service import AuthService
 from dependencies import get_current_user, require_admin
 
@@ -59,3 +59,35 @@ async def read_admin_data(current_user = Depends(require_admin)):
     Ruta protegida para admins: Solo accesible si el usuario es administrador.
     """
     return {"message": "Bienvenido al panel de administrador", "admin_email": current_user.email}
+
+@router.post("/forgot-password")
+async def forgot_password(request_data: PasswordResetRequest, db: Session = Depends(get_db)):
+    auth_service = AuthService(db)
+    success, message = await auth_service.request_password_reset(request_data.email)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+@router.post("/reset-password")
+async def reset_password(request_data: PasswordResetConfirm, db: Session = Depends(get_db)):
+    auth_service = AuthService(db)
+    success, message = auth_service.confirm_password_reset(request_data.token, request_data.new_password)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+@router.post("/change-password")
+async def change_password(
+    request_data: PasswordChange,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    auth_service = AuthService(db)
+    success, message = auth_service.change_password(
+        current_user, 
+        request_data.current_password, 
+        request_data.new_password
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
