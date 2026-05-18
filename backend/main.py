@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from database.session import engine, Base
 from models import user, course, lesson, home_config as model_home_config, enrollment
@@ -30,6 +30,10 @@ app.include_router(downloads.router)
 async def root():
     return {"message": "Bienvenido a la API de Gestión de Cursos de Centra"}
 
-@app.get("/health")
+@app.get("/health", status_code=status.HTTP_200_OK)
 async def health_check():
-    return {"status": "healthy"}
+    """
+    Endpoint ultra liviano para health checks.
+    Retorna un Response vacío con status 200 para evitar overhead de serialización JSON.
+    """
+    return Response(status_code=status.HTTP_200_OK)

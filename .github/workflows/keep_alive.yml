@@ -1,0 +1,32 @@
+name: Keep Render & Supabase Alive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render from sleeping (sleeps after 15 mins)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger from the GitHub Actions UI
+
+jobs:
+  ping_services:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend (FastAPI /health)
+        # We send a simple GET request to the /health endpoint
+        # We use --fail to fail the step if the status code is not 200, 
+        # --silent to avoid cluttering the logs, and --show-error to still see errors.
+        run: |
+          curl --fail --silent --show-error "https://centra-kinesiologia.onrender.com/health"
+          echo "Render ping successful"
+
+      - name: Ping Supabase Database (REST API)
+        # We send a GET request to the Supabase REST endpoint (we query the 'users' table limit=1 just to generate activity).
+        # Alternatively, querying any table or the root endpoint is enough to register activity.
+        # It uses secrets configured in GitHub Actions to authenticate.
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          curl --fail --silent --show-error "${SUPABASE_URL}/rest/v1/?limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+          echo "Supabase ping successful"
