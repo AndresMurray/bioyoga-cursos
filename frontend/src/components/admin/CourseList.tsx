@@ -31,7 +31,7 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
         <Card key={course.id} className="group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           {course.images && course.images.length > 0 ? (
             <img 
-              src={course.images[0].url} 
+              src={course.images.find(img => img.is_cover)?.url || course.images[0].url} 
               alt={course.title} 
               className="w-full h-48 object-cover bg-muted" 
             />

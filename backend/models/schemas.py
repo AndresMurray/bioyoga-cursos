@@ -70,6 +70,8 @@ class LessonPdfResponse(LessonPdfBase):
 
 class CourseImageBase(BaseModel):
     url: str
+    order: Optional[int] = 0
+    is_cover: Optional[bool] = False
 
 class CourseImageResponse(CourseImageBase):
     id: int
