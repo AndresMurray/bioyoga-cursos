@@ -8,7 +8,7 @@
   "crons": [
     {
       "path": "/admin/students/check-expired",
-      "schedule": "0 9 * * *"
+      "schedule": "50 19 * * *"
     }
   ]
 }
