@@ -19,7 +19,7 @@ async def list_my_courses(
     Lista de cursos en los que el usuario actual está inscripto.
     """
     service = StudentService(db)
-    return service.get_user_courses(current_user.id)
+    return await service.get_user_courses(current_user.id)
 
 
 @router.get("", response_model=list[CourseListResponse])

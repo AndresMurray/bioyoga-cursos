@@ -127,3 +127,39 @@ async def send_password_reset_email(email: str, first_name: str, token: str):
             print(f"Error sending password reset email: {response.text}")
             return False
         return True
+
+
+async def send_expiration_email(student_email: str, course_title: str):
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+
+    payload = {
+        "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
+        "to": [{"email": "amurrayroppel@gmail.com", "name": "Andrés Murray"}],
+        "subject": f"Acceso Finalizado: {student_email} - {course_title}",
+        "htmlContent": f"""
+            <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #4a3f35;">
+                    <h2 style="color: #d9534f;">Aviso de finalización de acceso</h2>
+                    <p>Al alumno <strong>{student_email}</strong> se le terminó el acceso al curso <strong>{course_title}</strong>.</p>
+                    <p style="font-weight: bold; color: #d9534f; font-size: 16px;">
+                        No olvides sacarle el acceso de la carpeta de drive.
+                    </p>
+                    <br>
+                    <p>Saludos,<br>Sistema Centra Kinesiología</p>
+                </body>
+            </html>
+        """
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, headers=headers, json=payload)
+        if response.status_code != 201:
+            print(f"Error sending expiration email: {response.text}")
+            return False
+        return True
+
