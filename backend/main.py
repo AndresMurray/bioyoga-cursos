@@ -1,5 +1,9 @@
+import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from alembic.config import Config
+from alembic import command
 from database.session import engine, Base
 from models import user, course, lesson, home_config as model_home_config, enrollment
 from routes import auth, courses, lessons, uploads, home_config as route_home_config, students, downloads
@@ -7,7 +11,21 @@ from routes import auth, courses, lessons, uploads, home_config as route_home_co
 # Create tables
 # Base.metadata.create_all(bind=engine)  # Usamos Alembic para las migraciones en su lugar
 
-app = FastAPI(title="Centra Kinesiología - Gestión de Cursos API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Run database migrations on startup
+    try:
+        print("Running database migrations...")
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        alembic_cfg = Config(os.path.join(current_dir, "alembic.ini"))
+        command.upgrade(alembic_cfg, "head")
+        print("Database migrations applied successfully!")
+    except Exception as e:
+        print(f"Error running database migrations: {e}")
+    yield
+
+app = FastAPI(title="Centra Kinesiología - Gestión de Cursos API", lifespan=lifespan)
+
 
 # Configure CORS
 app.add_middleware(
