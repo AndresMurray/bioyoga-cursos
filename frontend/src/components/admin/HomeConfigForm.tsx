@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHomeConfig } from '@/hooks/useHomeConfig';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -19,6 +19,7 @@ export default function HomeConfigForm() {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
@@ -50,6 +51,15 @@ export default function HomeConfigForm() {
       const file = e.target.files[0];
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setFormData(prev => ({ ...prev, hero_image_url: '' }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -105,22 +115,39 @@ export default function HomeConfigForm() {
           <label className="block text-sm font-medium mb-2">Foto Principal</label>
           <div className="flex gap-6 items-start">
             <div className="w-48 h-48 rounded-xl overflow-hidden bg-muted border border-border flex items-center justify-center shrink-0">
-              {imagePreview ? (
+              {imagePreview && imagePreview !== "/images/kinesiologist.png" ? (
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-muted-foreground">Sin foto</span>
+                <div className="flex flex-col items-center gap-2 text-center p-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-muted-foreground/60">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span className="text-xs text-muted-foreground font-medium">Sin foto de presentación</span>
+                </div>
               )}
             </div>
             <div className="flex flex-col gap-2 flex-grow">
               <input 
                 type="file" 
                 accept="image/*"
+                ref={fileInputRef}
                 onChange={handleImageChange}
                 className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors"
               />
               <p className="text-xs text-muted-foreground mt-2">
                 Subí una imagen tuya para mostrar en la Home (JPG, PNG o WebP, máximo 5MB).
               </p>
+              {imagePreview && imagePreview !== "/images/kinesiologist.png" && (
+                <Button 
+                  type="button" 
+                  variant="danger" 
+                  size="sm" 
+                  onClick={handleRemoveImage}
+                  className="mt-2 self-start"
+                >
+                  Quitar Imagen
+                </Button>
+              )}
             </div>
           </div>
         </div>
