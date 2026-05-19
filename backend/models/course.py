@@ -10,6 +10,8 @@ class CourseImage(Base):
     id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     url = Column(String, nullable=False)
+    order = Column(Integer, default=0, nullable=False)
+    is_cover = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationship
@@ -32,7 +34,7 @@ class Course(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationship
-    images = relationship("CourseImage", back_populates="course", cascade="all, delete-orphan")
+    images = relationship("CourseImage", back_populates="course", cascade="all, delete-orphan", order_by="CourseImage.order")
     lessons = relationship("Lesson", back_populates="course", cascade="all, delete-orphan", order_by="Lesson.order")
     enrollments = relationship("Enrollment", back_populates="course", cascade="all, delete-orphan", passive_deletes=True)
 

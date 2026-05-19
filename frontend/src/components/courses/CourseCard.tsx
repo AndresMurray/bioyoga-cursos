@@ -28,11 +28,17 @@ const CourseCard = ({ course }: CourseCardProps) => {
     fetchConfig();
   }, [fetchConfig]);
 
-  const images = course.images && course.images.length > 0 
-    ? course.images.map(img => img.url) 
+  // Sort images by order
+  const sortedCourseImages = course.images 
+    ? [...course.images].sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [];
+
+  const images = sortedCourseImages.length > 0 
+    ? sortedCourseImages.map(img => img.url) 
     : ['/images/placeholder.png'];
 
-  const coverImage = images[0];
+  const coverImageObj = sortedCourseImages.find(img => img.is_cover);
+  const coverImage = coverImageObj ? coverImageObj.url : images[0];
 
   const checkOwnershipAndPurchase = async () => {
     try {

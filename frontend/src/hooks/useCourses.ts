@@ -5,6 +5,8 @@ export interface CourseImage {
   id?: number;
   course_id?: number;
   url: string;
+  order?: number;
+  is_cover?: boolean;
 }
 
 export interface LessonPdf {

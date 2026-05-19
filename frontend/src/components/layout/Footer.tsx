@@ -34,7 +34,6 @@ const Footer = () => {
           <div>
             <h4 style={{ marginBottom: '1.2rem' }}>Contacto</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.8rem', color: 'var(--muted-foreground)' }}>
-              <li>Email: contacto@centra.com</li>
               <li>Dirección: Necochea, Buenos Aires, Argentina</li>
               <li style={{ marginTop: '0.5rem' }}>
                 <a 
