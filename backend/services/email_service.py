@@ -6,7 +6,7 @@ load_dotenv()
 
 BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL", "[EMAIL_ADDRESS]")
-SENDER_NAME = os.getenv("SENDER_NAME", "Centra Kinesiología")
+SENDER_NAME = os.getenv("SENDER_NAME")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
 async def send_validation_email(email: str, first_name: str, token: str, frontend_url: str = None):
