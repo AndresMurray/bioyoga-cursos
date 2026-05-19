@@ -139,7 +139,10 @@ async def send_expiration_email(student_email: str, course_title: str):
 
     payload = {
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
-        "to": [{"email": "amurrayroppel@gmail.com", "name": "Andrés Murray"}],
+        "to": [
+            {"email": "amurrayroppel@gmail.com", "name": "Andrés Murray"},
+            {"email": "centraformaciones@gmail.com", "name": "Centra Formaciones"}
+        ],
         "subject": f"Acceso Finalizado: {student_email} - {course_title}",
         "htmlContent": f"""
             <html>
