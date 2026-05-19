@@ -31,3 +31,11 @@ class EnrollmentRepository:
         self.db.commit()
         self.db.refresh(enrollment)
         return enrollment
+
+    def get_expired_active_enrollments(self):
+        now = datetime.now()
+        return self.db.query(Enrollment).filter(
+            Enrollment.is_active == True,
+            Enrollment.end_date <= now
+        ).all()
+

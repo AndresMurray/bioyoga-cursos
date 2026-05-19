@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from repositories.user_repository import UserRepository
 from repositories.enrollment_repository import EnrollmentRepository
 from repositories.course_repository import CourseRepository
-from services.email_service import send_enrollment_email
+from services.email_service import send_enrollment_email, send_expiration_email
 from datetime import datetime, timedelta
 
 class StudentService:
@@ -12,7 +12,8 @@ class StudentService:
         self.enrollment_repo = EnrollmentRepository(db)
         self.course_repo = CourseRepository(db)
 
-    def list_students(self, page: int, size: int, search: str = None):
+    async def list_students(self, page: int, size: int, search: str = None):
+        await self.check_and_expire_enrollments()
         users, total, pages = self.user_repo.get_paginated_students(page, size, search)
         
         student_items = []
@@ -83,16 +84,40 @@ class StudentService:
 
         return enrollment, None
 
-    def unenroll_student(self, user_id: int, course_id: int):
+    async def check_and_expire_enrollments(self):
+        expired = self.enrollment_repo.get_expired_active_enrollments()
+        for enrollment in expired:
+            enrollment.is_active = False
+            self.enrollment_repo.update(enrollment)
+            try:
+                await send_expiration_email(
+                    student_email=enrollment.user.email,
+                    course_title=enrollment.course.title
+                )
+            except Exception as e:
+                print(f"[WARNING] No se pudo enviar el email de expiración automática para {enrollment.user.email}: {e}")
+
+    async def unenroll_student(self, user_id: int, course_id: int):
         enrollment = self.enrollment_repo.get_by_user_and_course(user_id, course_id)
         if not enrollment:
             return False, "Inscripción no encontrada"
             
         enrollment.is_active = False
         self.enrollment_repo.update(enrollment)
+
+        # Send expiration email
+        try:
+            await send_expiration_email(
+                student_email=enrollment.user.email,
+                course_title=enrollment.course.title
+            )
+        except Exception as e:
+            print(f"[WARNING] No se pudo enviar el email de expiración manual: {e}")
+
         return True, None
 
-    def get_user_courses(self, user_id: int):
+    async def get_user_courses(self, user_id: int):
+        await self.check_and_expire_enrollments()
         enrollments = self.enrollment_repo.get_active_by_user(user_id)
         courses = []
         for e in enrollments:
