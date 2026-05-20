@@ -56,11 +56,27 @@ export default async function Home() {
         <div className="container grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="relative">
             <div className="absolute -inset-4 bg-accent rounded-2xl -z-10 transform -rotate-2"></div>
-            <img 
-              src={heroData.hero_image_url} 
-              alt="Kinesióloga" 
-              className="w-full rounded-xl shadow-2xl block"
-            />
+            {(!heroData.hero_image_url || heroData.hero_image_url === "/images/kinesiologist.png" || heroData.hero_image_url.trim() === "") ? (
+              <div className="w-full aspect-[4/5] rounded-xl border-2 border-dashed border-primary/20 bg-muted/20 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-accent/5 opacity-50"></div>
+                <div className="relative flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary/70">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-lg text-foreground/80">Espacio para Foto de Presentación</h3>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <img 
+                src={heroData.hero_image_url} 
+                alt="Kinesióloga" 
+                className="w-full rounded-xl shadow-2xl block"
+              />
+            )}
           </div>
           <div>
             <span className="text-primary font-semibold uppercase tracking-[0.2em] text-sm block mb-4">

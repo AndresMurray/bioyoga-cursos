@@ -76,6 +76,6 @@ async def delete_lesson(
     Eliminar una clase (solo admin).
     """
     service = LessonService(db)
-    success, error = service.delete_lesson(lesson_id)
+    success, error = await service.delete_lesson(lesson_id)
     if error:
         raise HTTPException(status_code=404, detail=error)
