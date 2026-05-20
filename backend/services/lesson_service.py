@@ -3,6 +3,7 @@ from repositories.lesson_repository import LessonRepository
 from repositories.course_repository import CourseRepository
 from repositories.enrollment_repository import EnrollmentRepository
 from models.schemas import LessonCreate, LessonUpdate
+from services import cloudinary_service
 
 
 class LessonService:
@@ -64,10 +65,24 @@ class LessonService:
         updated = self.repository.update(lesson, update_data)
         return updated, None
 
-    def delete_lesson(self, lesson_id: int):
+    async def delete_lesson(self, lesson_id: int):
         lesson = self.repository.get_by_id(lesson_id)
         if not lesson:
             return False, "Clase no encontrada"
+
+        # Borrar recursos de Cloudinary en cascada
+        if lesson.image_url:
+            try:
+                await cloudinary_service.delete_image_by_url(lesson.image_url)
+            except Exception as e:
+                print(f"Error al borrar la imagen de la clase {lesson_id} en Cloudinary: {e}")
+
+        for pdf in lesson.pdfs:
+            if pdf.url:
+                try:
+                    await cloudinary_service.delete_pdf_by_url(pdf.url)
+                except Exception as e:
+                    print(f"Error al borrar el PDF {pdf.id} de la clase {lesson_id} en Cloudinary: {e}")
 
         self.repository.delete(lesson)
         return True, None

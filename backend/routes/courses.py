@@ -86,7 +86,7 @@ async def delete_course(
     Eliminar un curso y sus clases (solo admin).
     """
     service = CourseService(db)
-    success, error = service.delete_course(course_id)
+    success, error = await service.delete_course(course_id)
     if error:
         status_code = status.HTTP_404_NOT_FOUND if "no encontrado" in error.lower() else status.HTTP_400_BAD_REQUEST
         raise HTTPException(status_code=status_code, detail=error)
