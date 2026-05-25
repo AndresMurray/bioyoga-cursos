@@ -157,44 +157,45 @@ export default function CourseDetailsPage() {
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="animate-fade min-h-[80vh] py-16">
-        <div className="container max-w-5xl">
+        <div className="container max-w-5xl mx-auto px-4">
           <Link 
             href="/admin" 
-            className="inline-flex items-center text-primary font-semibold hover:text-primary/80 transition-colors mb-8"
+            className="inline-flex items-center text-primary font-bold hover:text-primary/85 transition-all hover:-translate-x-1.5 duration-300 gap-1.5 mb-8 text-sm"
           >
-            ← Volver al Panel
+            <span className="text-base">←</span> Volver al Panel de Admin
           </Link>
 
-          <Card className="mb-12">
-            <CardContent className="p-8">
-              <h1 className="text-3xl font-bold mb-3 text-foreground">{course.title}</h1>
-              <p className="text-muted-foreground text-lg mb-6 max-w-3xl">
-                {course.description || 'Sin descripción'}
-              </p>
-              <div className="flex items-center gap-4">
-                <Badge variant={course.is_visible ? 'success' : 'secondary'}>
-                  {course.is_visible ? 'Visible en tienda' : 'Oculto'}
-                </Badge>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {course.duracion_dias} días de acceso
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-white/45 backdrop-blur-md rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] border border-white/70 p-8 shadow-sm mb-12 animate-fade">
+            <h1 className="text-3xl md:text-4xl font-bold font-serif mb-3 text-foreground">{course.title}</h1>
+            <p className="text-foreground/75 text-lg mb-6 max-w-3xl leading-relaxed">
+              {course.description || 'Sin descripción'}
+            </p>
+            <div className="flex items-center gap-4 flex-wrap">
+              <Badge variant={course.is_visible ? 'success' : 'secondary'} className="shadow-sm">
+                {course.is_visible ? 'Visible en tienda' : 'Oculto'}
+              </Badge>
+              <span className="text-xs font-bold text-foreground/60 bg-primary/10 px-3 py-1 rounded-full">
+                {course.duracion_dias} días de acceso para alumnos
+              </span>
+            </div>
+          </div>
 
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-              <h2 className="text-2xl font-semibold text-foreground">
-                Clases del Curso <span className="text-muted-foreground">({lessons.length})</span>
+              <h2 className="text-2xl font-bold font-serif text-foreground flex items-center gap-2.5">
+                Clases del Curso 
+                <span className="bg-primary text-white text-xs font-extrabold px-2.5 py-1 rounded-full shadow-sm">
+                  {lessons.length}
+                </span>
               </h2>
-              <Button onClick={handleOpenCreateForm}>
+              <Button onClick={handleOpenCreateForm} className="shadow-md rounded-full font-bold">
                 + Nueva Clase
               </Button>
             </div>
 
             {lessonsLoading ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <div className="animate-pulse">Cargando clases...</div>
+              <div className="text-center py-12 text-foreground/60 font-medium animate-pulse">
+                Cargando el listado de clases...
               </div>
             ) : (
               <LessonList

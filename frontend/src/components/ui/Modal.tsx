@@ -20,7 +20,7 @@ export function Modal({ isOpen, onClose, children, className }: ModalProps) {
     >
       <div 
         className={cn(
-          "bg-background rounded-xl p-8 shadow-2xl animate-fade w-[95%] max-w-lg max-h-[90vh] overflow-y-auto border border-border",
+          "bg-white rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] p-8 md:p-10 shadow-2xl shadow-primary/10 animate-fade w-[95%] max-w-lg max-h-[85vh] overflow-y-auto border border-border",
           className
         )}
       >

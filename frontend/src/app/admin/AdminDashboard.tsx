@@ -39,11 +39,7 @@ const AdminDashboard = () => {
   });
 
 
-  // Mock data for users tab (to be implemented later)
-  const [users] = useState([
-    { id: 1, name: "Andrés Murray", email: "andres@email.com", activeCourses: ["Kinesiología Deportiva Avanzada"] },
-    { id: 2, name: "Lucía Pérez", email: "lucia@email.com", activeCourses: [] },
-  ]);
+
 
   useEffect(() => {
     fetchCourses();
@@ -116,42 +112,60 @@ const AdminDashboard = () => {
 
   return (
     <div className="animate-fade min-h-[80vh] py-16">
-      <div className="container">
-        <header className="mb-12">
-          <h1 className="text-4xl font-bold mb-2 text-foreground">Panel de Administración 🔐</h1>
-          <p className="text-muted-foreground">Gestiona los cursos y los alumnos de Centra.</p>
+      <div className="container max-w-6xl mx-auto px-4">
+        {/* Editorial Premium Header */}
+        <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-3 font-serif">
+              Panel de Administración <span className="inline-block animate-pulse">🔐</span>
+            </h1>
+            <p className="text-lg text-foreground/70 font-medium">
+              Gestiona el espacio sagrado de BioYoga Consciente.
+            </p>
+          </div>
         </header>
 
-        {/* Tabs */}
-        <div className="flex gap-8 border-b border-border mb-12">
+
+
+        {/* Floating Glassmorphic Tabs Toolbar */}
+        <div className="bg-white/40 border border-white/60 p-2 rounded-2xl md:rounded-full flex flex-col md:flex-row gap-2 w-full md:w-fit mb-12 shadow-sm backdrop-blur-md">
           <button 
             onClick={() => setActiveTab('courses')}
-            className={`pb-4 font-semibold transition-all border-b-2 ${
+            className={`flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl md:rounded-full font-bold text-sm transition-all duration-300 ${
               activeTab === 'courses' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-muted-foreground hover:text-primary'
+                ? 'bg-primary text-white shadow-sm scale-102 md:scale-105' 
+                : 'text-foreground/80 hover:text-primary hover:bg-white/40'
             }`}
           >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
             Gestión de Cursos
           </button>
           <button 
             onClick={() => setActiveTab('home_config')}
-            className={`pb-4 font-semibold transition-all border-b-2 ${
+            className={`flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl md:rounded-full font-bold text-sm transition-all duration-300 ${
               activeTab === 'home_config' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-muted-foreground hover:text-primary'
+                ? 'bg-primary text-white shadow-sm scale-102 md:scale-105' 
+                : 'text-foreground/80 hover:text-primary hover:bg-white/40'
             }`}
           >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
             Configuración Home
           </button>
           <button 
             onClick={() => setActiveTab('users')}
-            className={`pb-4 font-semibold transition-all border-b-2 ${
+            className={`flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl md:rounded-full font-bold text-sm transition-all duration-300 ${
               activeTab === 'users' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-muted-foreground hover:text-primary'
+                ? 'bg-primary text-white shadow-sm scale-102 md:scale-105' 
+                : 'text-foreground/80 hover:text-primary hover:bg-white/40'
             }`}
           >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
             Gestión de Alumnos
           </button>
         </div>
@@ -159,15 +173,15 @@ const AdminDashboard = () => {
         {/* Cursos Tab */}
         {activeTab === 'courses' && (
           <div>
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-semibold">Cursos Disponibles</h2>
-              <Button onClick={handleOpenCreateForm}>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+              <h2 className="text-2xl font-bold font-serif text-foreground">Cursos Disponibles</h2>
+              <Button onClick={handleOpenCreateForm} className="shadow-md">
                 + Nuevo Curso
               </Button>
             </div>
             
             {loading ? (
-              <div className="text-center p-12 text-muted-foreground">
+              <div className="text-center p-12 text-foreground/60 font-medium animate-pulse">
                 Cargando cursos...
               </div>
             ) : (

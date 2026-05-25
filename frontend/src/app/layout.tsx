@@ -4,10 +4,10 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Centra - Kinesiología y Cursos",
-  description: "Sistema de gestión de cursos y atención kinesiológica profesional.",
+  title: "BioYoga Consciente - Cursos y Formaciones de Yoga",
+  description: "Plataforma de formación profesional y cursos en yoga, meditación y bienestar consciente.",
   icons: {
-    icon: "/logo.png",
+    icon: "/favicon.ico",
   },
 };
 

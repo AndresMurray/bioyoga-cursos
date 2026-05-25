@@ -77,9 +77,9 @@ const CourseCard = ({ course }: CourseCardProps) => {
   return (
     <>
       <Card 
-        className="group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 animate-fade flex flex-col h-full"
+        className="group hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 animate-fade flex flex-col h-full rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] overflow-hidden border border-border bg-white"
       >
-        <div className="h-48 overflow-hidden relative">
+        <div className="h-48 overflow-hidden relative rounded-t-[2.5rem] rounded-tr-[0.75rem]">
           <img src={coverImage} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
           {course.discount_percentage > 0 && (
             <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
@@ -88,7 +88,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
           )}
         </div>
         <CardContent className="p-6 flex flex-col flex-grow">
-          <h3 className="text-xl font-semibold mb-4 line-clamp-2 flex-grow">{course.title}</h3>
+          <h3 className="text-xl font-bold mb-4 line-clamp-2 flex-grow text-[#3d312a] group-hover:text-primary transition-colors">{course.title}</h3>
           
           <div className="flex justify-between items-center pt-4 border-t border-border mt-auto mb-5">
             <div className="flex flex-col">
@@ -115,8 +115,8 @@ const CourseCard = ({ course }: CourseCardProps) => {
         </CardContent>
       </Card>
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} className="p-0 overflow-hidden max-w-lg">
-        <div className="h-64 relative bg-muted">
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} className="p-0 max-w-lg">
+        <div className="h-64 relative bg-muted overflow-hidden rounded-t-[2.5rem] rounded-tr-[0.75rem]">
           <ImageCarousel images={images} alt={course.title} />
           <button 
             onClick={() => setShowModal(false)}

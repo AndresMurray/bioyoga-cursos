@@ -3,55 +3,95 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer style={{
-      backgroundColor: 'var(--muted)',
-      padding: '4rem 0 2rem 0',
-      marginTop: '4rem',
-      borderTop: '1px solid var(--border)'
+      backgroundColor: '#2e4234', /* Warm Pine Forest Green */
+      padding: '5rem 0 3rem 0',
+      marginTop: '6rem',
+      borderTopLeftRadius: '3.5rem',
+      borderTopRightRadius: '3.5rem',
+      boxShadow: '0 -15px 30px -10px rgba(46, 66, 52, 0.15)',
+      color: '#faf7f2'
     }}>
-      <div className="container">
+      <div className="container px-4">
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: '3rem',
-          marginBottom: '3rem'
+          marginBottom: '4rem'
         }}>
-          <div>
-            <h3 style={{ color: 'var(--primary)', marginBottom: '1.5rem' }}>CENTRA</h3>
-            <p style={{ color: 'var(--muted-foreground)', fontSize: '0.9rem' }}>
-              Espacio dedicado a la kinesiología y la formación profesional con calidez y excelencia.
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <svg className="h-10 w-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="tealGradTopFoot" x1="20" y1="10" x2="60" y2="40" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#b7dada" stopOpacity="0.95"/>
+                    <stop offset="100%" stopColor="#8bbab7" stopOpacity="0.8"/>
+                  </linearGradient>
+                  <linearGradient id="tealGradBottomFoot" x1="30" y1="50" x2="80" y2="90" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#8bbab7" stopOpacity="0.9"/>
+                    <stop offset="100%" stopColor="#b7dada" stopOpacity="0.3"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 25,30 C 20,10 60,10 55,30 C 50,45 30,40 25,30 Z" fill="url(#tealGradTopFoot)" />
+                <path d="M 35,65 C 30,85 70,85 85,65 C 65,50 40,55 35,65 Z" fill="url(#tealGradBottomFoot)" />
+                <path d="M 54,12 C 54,20 40,30 35,38 C 28,47 16,68 16,72" stroke="#faf7f2" strokeWidth="3" strokeLinecap="round" />
+                <path d="M 35,38 C 45,43 55,58 55,75" stroke="#faf7f2" strokeWidth="3" strokeLinecap="round" />
+                <path d="M 40,49 L 52,65" stroke="#faf7f2" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M 64,38 C 61,38 58,41 58,45 C 58,49 61,52 64,52 C 62,50 61,48 61,45 C 61,42 62,40 64,38 Z" fill="#faf7f2" />
+                <path d="M 54,12 L 56,36" stroke="#faf7f2" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+              <span className="font-sans text-2xl font-bold tracking-tight text-[#faf7f2]">BioYoga</span>
+            </div>
+            <p style={{ color: '#c5d5cb', fontSize: '0.9rem', lineHeight: '1.6' }}>
+              Espacio dedicado a la formación profesional en yoga, meditación y bienestar consciente.
             </p>
           </div>
           
           <div>
-            <h4 style={{ marginBottom: '1.2rem' }}>Enlaces</h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <li><a href="#" style={{ color: 'var(--muted-foreground)' }}>Inicio</a></li>
-              <li><a href="#" style={{ color: 'var(--muted-foreground)' }}>Cursos</a></li>
-              <li><a href="#" style={{ color: 'var(--muted-foreground)' }}>Sobre Mí</a></li>
+            <h4 style={{ marginBottom: '1.5rem', fontWeight: 600, color: '#faf7f2', letterSpacing: '0.05em' }}>Enlaces</h4>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <li><a href="#" style={{ color: '#c5d5cb', transition: 'color 0.2s' }} className="hover:text-white">Inicio</a></li>
+              <li><a href="#cursos" style={{ color: '#c5d5cb', transition: 'color 0.2s' }} className="hover:text-white">Cursos</a></li>
+              <li><a href="#sobre-mi" style={{ color: '#c5d5cb', transition: 'color 0.2s' }} className="hover:text-white">Sobre Mí</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 style={{ marginBottom: '1.2rem' }}>Contacto</h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.8rem', color: 'var(--muted-foreground)' }}>
-              <li>Dirección: Necochea, Buenos Aires, Argentina</li>
+            <h4 style={{ marginBottom: '1.5rem', fontWeight: 600, color: '#faf7f2', letterSpacing: '0.05em' }}>Contacto</h4>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.9rem', color: '#c5d5cb' }}>
+              <li className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8bbab7] mb-0.5">Dirección</span>
+                <span>Calle 54 nro 3640 (7630) Necochea</span>
+              </li>
+              <li className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8bbab7] mb-0.5">Email</span>
+                <a href="mailto:bioyogaconsciente@gmail.com" className="hover:text-white transition-colors">
+                  bioyogaconsciente@gmail.com
+                </a>
+              </li>
+              <li className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8bbab7] mb-0.5">Teléfono</span>
+                <a href="tel:+5492262498757" className="hover:text-white transition-colors">
+                  +54 9 2262-498757
+                </a>
+              </li>
               <li style={{ marginTop: '0.5rem' }}>
                 <a 
-                  href="https://instagram.com/metodo.centra" 
+                  href="https://instagram.com/bioyogaconscienteok" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
                     gap: '0.5rem', 
-                    color: 'var(--primary)',
-                    fontWeight: '500'
+                    color: '#8bbab7',
+                    fontWeight: '600'
                   }}
+                  className="hover:text-[#b7dada] transition-colors"
                 >
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                   </svg>
-                  Seguinos: @metodo.centra
+                  Instagram: @bioyogaconscienteok
                 </a>
               </li>
             </ul>
@@ -59,13 +99,13 @@ const Footer = () => {
         </div>
         
         <div style={{
-          borderTop: '1px solid var(--border)',
-          paddingTop: '2rem',
+          borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+          paddingTop: '2.5rem',
           textAlign: 'center',
-          color: 'var(--muted-foreground)',
-          fontSize: '0.8rem'
+          color: '#c5d5cb',
+          fontSize: '0.85rem'
         }}>
-          © {new Date().getFullYear()} Centra Kinesiología. Todos los derechos reservados.
+          © {new Date().getFullYear()} BioYoga Consciente. Todos los derechos reservados.
         </div>
       </div>
     </footer>

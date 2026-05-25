@@ -38,11 +38,11 @@ export default async function Home() {
 
   // Fallback values in case config is not yet set
   const heroData = homeConfig || {
-    hero_title: "Pasión por el movimiento y la salud",
-    hero_subtitle_1: "Hola, soy Lic. en Kinesiología. Mi objetivo es ayudarte a recuperar tu bienestar a través de técnicas innovadoras y un trato cercano y profesional.",
-    hero_subtitle_2: "En este espacio no solo brindo atención personalizada, sino que también comparto mis conocimientos a través de cursos especializados para profesionales y estudiantes del área.",
-    hero_image_url: "/images/kinesiologist.png",
-    whatsapp_number: "5491112345678"
+    hero_title: "",
+    hero_subtitle_1: "",
+    hero_subtitle_2: "",
+    hero_image_url: "",
+    whatsapp_number: ""
   };
 
   return (
@@ -50,108 +50,100 @@ export default async function Home() {
       <WhatsAppButton phoneNumber={heroData.whatsapp_number} />
       <div className="animate-fade">
         <RedirectIfLoggedIn />
-      
-      {/* Hero Section / Presentation */}
-      <section id="sobre-mi" className="py-24 bg-background min-h-[80vh] flex items-center">
-        <div className="container grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="relative">
-            <div className="absolute -inset-4 bg-accent rounded-2xl -z-10 transform -rotate-2"></div>
-            {(!heroData.hero_image_url || heroData.hero_image_url === "/images/kinesiologist.png" || heroData.hero_image_url.trim() === "") ? (
-              <div className="w-full aspect-[4/5] rounded-xl border-2 border-dashed border-primary/20 bg-muted/20 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-accent/5 opacity-50"></div>
-                <div className="relative flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary/70">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+
+        {/* Hero Section / Presentation */}
+        <section id="sobre-mi" className="py-20 md:py-28 bg-gradient-to-b from-[#faf7f2] to-[#f4efea] flex flex-col items-center">
+          <div className="container max-w-4xl text-center px-4">
+            <h1 className="font-sans text-4xl md:text-6xl font-black leading-tight mb-8 text-[#3d312a] tracking-tight max-w-3xl mx-auto uppercase">
+              {heroData.hero_title}
+            </h1>
+
+            {/* Circular Frame with Offset Shadow */}
+            <div className="relative w-72 h-72 md:w-80 md:h-80 mx-auto mb-10">
+              <div className="zen-circle-frame w-full h-full overflow-hidden border-4 border-white">
+                {(!heroData.hero_image_url || heroData.hero_image_url.trim() === "") ? (
+                  <div className="w-full h-full bg-muted/20 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-accent/5 opacity-50"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-primary/70">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                     </svg>
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="font-semibold text-lg text-foreground/80">Espacio para Foto de Presentación</h3>
-                  </div>
-                </div>
+                ) : (
+                  <img
+                    src={heroData.hero_image_url}
+                    alt="Instructora de Yoga"
+                    className="w-full h-full object-cover block"
+                  />
+                )}
               </div>
-            ) : (
-              <img 
-                src={heroData.hero_image_url} 
-                alt="Kinesióloga" 
-                className="w-full rounded-xl shadow-2xl block"
-              />
-            )}
-          </div>
-          <div>
-            <span className="text-primary font-semibold uppercase tracking-[0.2em] text-sm block mb-4">
-              Sobre Mí
-            </span>
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground">
-              {heroData.hero_title}
-            </h1>
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+            </div>
+
+            <p className="text-base md:text-lg text-muted-foreground mb-6 leading-relaxed max-w-2xl mx-auto">
               {heroData.hero_subtitle_1}
             </p>
-            <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
               {heroData.hero_subtitle_2}
             </p>
-            <div className="flex flex-wrap gap-4">
+
+            <div className="flex justify-center">
               <a href="#cursos">
-                <Button size="lg" className="shadow-lg shadow-primary/30 text-base px-8">
-                  Ver Cursos
+                <Button size="lg" className="rounded-full shadow-lg shadow-primary/30 text-base px-8 py-6 font-semibold bg-primary hover:bg-primary/95 text-white transition-all transform hover:scale-[1.02]">
+                  Ver Cursos y Talleres
                 </Button>
               </a>
-              <a href="#">
-              </a>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Courses Section */}
-      <section id="cursos" className="py-24 bg-white">
-        <div className="container">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-4xl font-bold mb-4 text-foreground">Nuestros Cursos</h2>
-            <p className="text-lg text-muted-foreground">
-              Capacitaciones diseñadas para potenciar tu carrera profesional con las últimas tendencias en kinesiología y fisiatría.
-            </p>
-          </div>
-
-          {courses.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {courses.map((course) => (
-                <CourseCard key={course.id} course={course} />
-              ))}
+        {/* Courses Section */}
+        <section id="cursos" className="py-24 bg-[#faf7f2]">
+          <div className="container">
+            <div className="text-center mb-16 max-w-2xl mx-auto">
+              <div className="lotus-divider mb-8"></div>
+              <h2 className="text-4xl font-black mb-4 text-[#3d312a] uppercase tracking-tight">Nuestros Cursos y Talleres</h2>
+              <p className="text-lg text-muted-foreground">
+                Capacitaciones diseñadas para profundizar tu práctica personal y potenciar tu camino en el mundo del yoga y el bienestar.
+              </p>
             </div>
-          ) : (
-            <div className="text-center p-12 bg-muted rounded-2xl border border-border">
-              <span className="text-4xl block mb-4">📚</span>
-              <h3 className="text-xl font-bold mb-2">Próximamente nuevos cursos</h3>
-              <p className="text-muted-foreground">Actualmente estamos preparando nuevo contenido. ¡Mantenete atento!</p>
-            </div>
-          )}
-        </div>
-      </section>
 
-      {/* Call to action */}
-      <section className="py-24 bg-background">
-        <div className="container">
-          <div className="bg-secondary rounded-3xl p-12 md:p-20 text-center flex flex-col items-center shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -ml-20 -mb-20"></div>
-            
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-secondary-foreground relative z-10">
-              ¿Listo para empezar?
-            </h2>
-            <p className="text-lg mb-8 max-w-xl text-secondary-foreground/80 relative z-10">
-              Únete a nuestra plataforma y accede a contenido exclusivo diseñado por expertos.
-            </p>
-            <Link href="/register" className="relative z-10">
-              <Button size="lg" className="shadow-xl shadow-primary/40 text-base px-10 py-6">
-                Crear una cuenta gratis
-              </Button>
-            </Link>
+            {courses.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {courses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center p-12 bg-muted rounded-[2.5rem] border border-border">
+                <span className="text-4xl block mb-4">📚</span>
+                <h3 className="text-xl font-bold mb-2">Próximamente nuevos cursos</h3>
+                <p className="text-muted-foreground">Actualmente estamos preparando nuevo contenido. ¡Mantenete atento!</p>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        {/* Call to action */}
+        <section className="py-24 bg-gradient-to-b from-[#faf7f2] to-[#f4efea]">
+          <div className="container">
+            <div className="bg-[#b9d8c8]/40 rounded-[3rem] rounded-tr-[1rem] rounded-bl-[1rem] p-12 md:p-20 text-center flex flex-col items-center border border-white shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#6c9e9b]/15 rounded-full blur-3xl -ml-20 -mb-20"></div>
+
+              <h2 className="text-3xl md:text-5xl font-black mb-4 text-[#3d312a] uppercase tracking-tight relative z-10">
+                ¿Listo para empezar tu viaje?
+              </h2>
+              <p className="text-lg mb-8 max-w-xl text-[#3d312a]/80 relative z-10 leading-relaxed">
+                Únete a nuestra escuela online de BioYoga y accede a formaciones y prácticas diseñadas para habitar tu cuerpo en plenitud.
+              </p>
+              <Link href="/register" className="relative z-10">
+                <Button size="lg" className="rounded-full shadow-xl shadow-primary/30 text-base px-10 py-6 bg-primary hover:bg-primary/95 text-white font-semibold">
+                  Crear una cuenta gratis
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
     </>
   );
 }

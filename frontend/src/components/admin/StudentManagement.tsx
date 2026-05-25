@@ -40,26 +40,26 @@ const StudentManagement = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <h2 className="text-2xl font-semibold">Alumnos Registrados</h2>
+        <h2 className="text-2xl font-bold font-serif text-foreground">Alumnos Registrados</h2>
         <div className="relative w-full md:w-96">
           <input
             type="text"
             placeholder="Buscar por nombre, email o DNI..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full px-4 py-2 pl-10 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+            className="w-full px-5 py-2.5 pl-11 rounded-full border border-white/60 bg-white/50 backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm font-medium placeholder:text-foreground/45 text-foreground"
           />
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60"
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -69,58 +69,59 @@ const StudentManagement = () => {
         </div>
       </div>
 
-      <Card className="overflow-hidden">
+      <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] border border-white/70 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
-              <tr>
-                <th className="px-6 py-4 font-semibold">Alumno</th>
-                <th className="px-6 py-4 font-semibold">DNI</th>
-                <th className="px-6 py-4 font-semibold">Cursos Activos</th>
-                <th className="px-6 py-4 font-semibold text-right">Acciones</th>
+            <thead>
+              <tr className="text-xs text-foreground/80 bg-primary/10 border-b border-white/60">
+                <th className="px-6 py-4.5 font-bold uppercase tracking-wider">Alumno</th>
+                <th className="px-6 py-4.5 font-bold uppercase tracking-wider">DNI</th>
+                <th className="px-6 py-4.5 font-bold uppercase tracking-wider">Cursos Activos</th>
+                <th className="px-6 py-4.5 font-bold uppercase tracking-wider text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-white/50">
               {loading && !studentsData ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground italic">
-                    Cargando alumnos...
+                  <td colSpan={4} className="px-6 py-16 text-center text-foreground/60 font-medium italic animate-pulse">
+                    Cargando comunidad de alumnos...
                   </td>
                 </tr>
               ) : studentsData?.items.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground italic">
-                    No se encontraron alumnos.
+                  <td colSpan={4} className="px-6 py-16 text-center text-foreground/60 font-medium italic">
+                    No se encontraron alumnos registrados.
                   </td>
                 </tr>
               ) : (
                 studentsData?.items.map((student) => (
-                  <tr key={student.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-foreground">{student.first_name} {student.last_name}</div>
-                      <div className="text-muted-foreground">{student.email}</div>
+                  <tr key={student.id} className="hover:bg-white/45 transition-colors duration-200">
+                    <td className="px-6 py-5">
+                      <div className="font-bold text-foreground text-base">{student.first_name} {student.last_name}</div>
+                      <div className="text-foreground/60 text-xs mt-0.5">{student.email}</div>
                     </td>
-                    <td className="px-6 py-4 text-muted-foreground">
+                    <td className="px-6 py-5 text-foreground/75 font-medium">
                       {student.dni}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-2">
+                    <td className="px-6 py-5">
+                      <div className="flex flex-wrap gap-1.5">
                         {student.active_courses.length > 0 ? (
                           student.active_courses.map((course) => (
-                            <Badge key={course.id} variant="secondary">
+                            <span key={course.id} className="text-xs font-bold bg-primary/10 text-primary px-3 py-1 rounded-full">
                               {course.title}
-                            </Badge>
+                            </span>
                           ))
                         ) : (
-                          <span className="text-muted-foreground italic">Ninguno</span>
+                          <span className="text-foreground/40 italic text-xs">Ningún curso activo</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 text-right">
                       <Button 
                         variant="outline" 
                         size="sm"
                         onClick={() => setSelectedStudent(student)}
+                        className="rounded-full text-xs font-bold px-4 py-1.5 shadow-sm transition-all h-auto"
                       >
                         Gestionar Accesos
                       </Button>
@@ -131,14 +132,16 @@ const StudentManagement = () => {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
 
       {studentsData && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={studentsData.pages}
-          onPageChange={setCurrentPage}
-        />
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={studentsData.pages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       )}
 
       {selectedStudent && (

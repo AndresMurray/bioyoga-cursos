@@ -110,7 +110,7 @@ export default function RegisterPage() {
         <CardContent className="p-8 md:p-12">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-primary mb-2">Crea tu cuenta</h2>
-            <p className="text-muted-foreground">Completá tus datos para registrarte en Centra</p>
+            <p className="text-muted-foreground">Completá tus datos para registrarte en BioYoga</p>
           </div>
 
           {errorMsg && (
