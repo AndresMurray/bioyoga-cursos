@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   title: "BioYoga Consciente - Cursos y Formaciones de Yoga",
   description: "Plataforma de formación profesional y cursos en yoga, meditación y bienestar consciente.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/logo-sin-fondo.png",
+    apple: "/logo-sin-fondo.png",
   },
 };
 

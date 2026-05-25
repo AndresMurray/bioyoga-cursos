@@ -20,25 +20,11 @@ const Footer = () => {
         }}>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <svg className="h-10 w-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="tealGradTopFoot" x1="20" y1="10" x2="60" y2="40" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#b7dada" stopOpacity="0.95"/>
-                    <stop offset="100%" stopColor="#8bbab7" stopOpacity="0.8"/>
-                  </linearGradient>
-                  <linearGradient id="tealGradBottomFoot" x1="30" y1="50" x2="80" y2="90" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#8bbab7" stopOpacity="0.9"/>
-                    <stop offset="100%" stopColor="#b7dada" stopOpacity="0.3"/>
-                  </linearGradient>
-                </defs>
-                <path d="M 25,30 C 20,10 60,10 55,30 C 50,45 30,40 25,30 Z" fill="url(#tealGradTopFoot)" />
-                <path d="M 35,65 C 30,85 70,85 85,65 C 65,50 40,55 35,65 Z" fill="url(#tealGradBottomFoot)" />
-                <path d="M 54,12 C 54,20 40,30 35,38 C 28,47 16,68 16,72" stroke="#faf7f2" strokeWidth="3" strokeLinecap="round" />
-                <path d="M 35,38 C 45,43 55,58 55,75" stroke="#faf7f2" strokeWidth="3" strokeLinecap="round" />
-                <path d="M 40,49 L 52,65" stroke="#faf7f2" strokeWidth="2.5" strokeLinecap="round" />
-                <path d="M 64,38 C 61,38 58,41 58,45 C 58,49 61,52 64,52 C 62,50 61,48 61,45 C 61,42 62,40 64,38 Z" fill="#faf7f2" />
-                <path d="M 54,12 L 56,36" stroke="#faf7f2" strokeWidth="2.5" strokeLinecap="round" />
-              </svg>
+              <img 
+                src="/logo-sin-fondo.png" 
+                alt="BioYoga Consciente" 
+                className="h-11 w-11 object-contain" 
+              />
               <span className="font-sans text-2xl font-bold tracking-tight text-[#faf7f2]">BioYoga</span>
             </div>
             <p style={{ color: '#c5d5cb', fontSize: '0.9rem', lineHeight: '1.6' }}>
