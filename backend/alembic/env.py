@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 load_dotenv()
-config.set_main_option('sqlalchemy.url', os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/centra_db"))
+config.set_main_option('sqlalchemy.url', os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/bioyoga_db"))
 
 from database.session import Base
 # Make sure all models are imported so Alembic can detect them

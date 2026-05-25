@@ -11,8 +11,39 @@ from routes import auth, courses, lessons, uploads, home_config as route_home_co
 # Create tables
 # Base.metadata.create_all(bind=engine)  # Usamos Alembic para las migraciones en su lugar
 
+def check_and_create_database():
+    from database.session import DATABASE_URL
+    from sqlalchemy import create_engine, text
+    from sqlalchemy.engine.url import make_url
+
+    try:
+        url = make_url(DATABASE_URL)
+        db_name = url.database
+        
+        # Connect to system "postgres" database to check/create target database
+        postgres_url = url.set(database="postgres")
+        temp_engine = create_engine(postgres_url, isolation_level="AUTOCOMMIT")
+        
+        with temp_engine.connect() as conn:
+            query = text("SELECT 1 FROM pg_database WHERE datname = :dbname")
+            result = conn.execute(query, {"dbname": db_name})
+            exists = result.scalar()
+            
+            if not exists:
+                print(f"La base de datos '{db_name}' no existe en PostgreSQL local. Creándola automáticamente...")
+                conn.execute(text(f"CREATE DATABASE {db_name}"))
+                print(f"¡Base de datos '{db_name}' creada exitosamente!")
+            else:
+                print(f"Base de datos '{db_name}' lista.")
+        temp_engine.dispose()
+    except Exception as e:
+        print(f"Advertencia al verificar/crear la base de datos: {e}")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Auto bootstrap target database if not exists
+    check_and_create_database()
+    
     # Run database migrations on startup
     try:
         print("Running database migrations...")

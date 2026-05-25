@@ -24,22 +24,37 @@ async def send_validation_email(email: str, first_name: str, token: str, fronten
     payload = {
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
         "to": [{"email": email, "name": first_name}],
-        "subject": "Valida tu cuenta - Centra Kinesiología",
+        "subject": "Activá tu cuenta - BioYoga Consciente 🌿",
         "htmlContent": f"""
             <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #4a3f35;">
-                    <h2 style="color: #f8b4a6;">¡Hola {first_name}!</h2>
-                    <p>Gracias por registrarte en Centra. Para activar tu cuenta y acceder a tus cursos, por favor haz clic en el siguiente botón:</p>
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="{validation_link}" 
-                           style="background-color: #f8b4a6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                           Validar mi cuenta
-                        </a>
+                <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.7; color: #3d312a; background-color: #faf7f2; padding: 40px 20px; margin: 0;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; border: 1px solid #c7e0d4; padding: 40px; box-shadow: 0 4px 12px rgba(74, 107, 83, 0.05);">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <span style="font-size: 40px;">🌿</span>
+                            <h2 style="color: #4a6b53; font-family: Georgia, serif; font-size: 28px; margin-top: 10px; margin-bottom: 0;">BioYoga Consciente</h2>
+                        </div>
+                        <h3 style="color: #3d312a; font-family: Georgia, serif; font-size: 20px; margin-top: 0;">¡Hola, {first_name}!</h3>
+                        <p style="font-size: 16px; margin-bottom: 25px;">
+                            Te damos la bienvenida a nuestro espacio. Para activar tu cuenta de alumno y acceder de inmediato a todos tus cursos y recursos interactivos, por favor haz clic en el siguiente botón:
+                        </p>
+                        <div style="text-align: center; margin: 35px 0;">
+                            <a href="{validation_link}" 
+                               style="background-color: #4a6b53; color: white; padding: 14px 32px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 10px rgba(74, 107, 83, 0.2); transition: all 0.3s;">
+                               Confirmar Cuenta
+                            </a>
+                        </div>
+                        <p style="font-size: 13px; color: #7c6c62; margin-top: 30px;">
+                            Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
+                        </p>
+                        <p style="font-size: 12px; color: #4a6b53; word-break: break-all; margin-top: 5px;">
+                            {validation_link}
+                        </p>
+                        <hr style="border: 0; border-top: 1px solid #c7e0d4; margin: 30px 0;" />
+                        <p style="font-size: 14px; color: #7c6c62; margin-bottom: 0;">
+                            Con amor y presencia,<br />
+                            <strong>El equipo de BioYoga Consciente</strong>
+                        </p>
                     </div>
-                    <p>O copia y pega este link en tu navegador:</p>
-                    <p>{validation_link}</p>
-                    <br>
-                    <p>Saludos,<br>El equipo de Centra</p>
                 </body>
             </html>
         """
@@ -64,20 +79,36 @@ async def send_enrollment_email(email: str, first_name: str, course_title: str, 
     payload = {
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
         "to": [{"email": email, "name": first_name}],
-        "subject": f"¡Ya tenés acceso al curso: {course_title}! - Centra Kinesiología",
+        "subject": f"¡Ya tenés acceso al curso: {course_title}! - BioYoga Consciente 🧘‍♂️",
         "htmlContent": f"""
             <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #4a3f35;">
-                    <h2 style="color: #f8b4a6;">¡Hola {first_name}!</h2>
-                    <p>¡Buenas noticias! Ya tenés acceso al curso <strong>{course_title}</strong>.</p>
-                    <div style="background-color: #fdf2f0; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
-                        <p style="font-size: 18px; margin: 0; color: #4a3f35;">
-                            <strong>Duración de tu acceso:</strong> {duration_days} días
+                <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.7; color: #3d312a; background-color: #faf7f2; padding: 40px 20px; margin: 0;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; border: 1px solid #c7e0d4; padding: 40px; box-shadow: 0 4px 12px rgba(74, 107, 83, 0.05);">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <span style="font-size: 40px;">🧘‍♂️</span>
+                            <h2 style="color: #4a6b53; font-family: Georgia, serif; font-size: 28px; margin-top: 10px; margin-bottom: 0;">BioYoga Consciente</h2>
+                        </div>
+                        <h3 style="color: #3d312a; font-family: Georgia, serif; font-size: 20px; margin-top: 0;">¡Hola, {first_name}!</h3>
+                        <p style="font-size: 16px; margin-bottom: 20px;">
+                            ¡Es hora de conectar! Te confirmamos que ya tienes acceso activo al curso: <strong>{course_title}</strong>.
+                        </p>
+                        <div style="background-color: #faf7f2; border: 1px solid #c7e0d4; border-radius: 16px; padding: 20px; margin: 25px 0; text-align: center;">
+                            <p style="font-size: 16px; margin: 0; color: #3d312a;">
+                                <strong>Período de acceso disponible:</strong>
+                            </p>
+                            <p style="font-size: 22px; font-weight: bold; margin: 5px 0 0 0; color: #4a6b53;">
+                                {duration_days} días
+                            </p>
+                        </div>
+                        <p style="font-size: 16px; margin-bottom: 25px;">
+                            Ya puedes ingresar a tu panel personal de alumno para empezar a transitar este camino de aprendizaje y movimiento consciente.
+                        </p>
+                        <hr style="border: 0; border-top: 1px solid #c7e0d4; margin: 30px 0;" />
+                        <p style="font-size: 14px; color: #7c6c62; margin-bottom: 0;">
+                            Te deseamos una excelente práctica,<br />
+                            <strong>El equipo de BioYoga Consciente</strong>
                         </p>
                     </div>
-                    <p>Ingresá a tu cuenta para empezar a disfrutar del contenido.</p>
-                    <br>
-                    <p>Saludos,<br>El equipo de Centra</p>
                 </body>
             </html>
         """
@@ -101,21 +132,36 @@ async def send_password_reset_email(email: str, first_name: str, token: str):
     payload = {
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
         "to": [{"email": email, "name": first_name}],
-        "subject": "Recupera tu contraseña - Centra Kinesiología",
+        "subject": "Recuperá tu contraseña - BioYoga Consciente 🔑",
         "htmlContent": f"""
             <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #4a3f35;">
-                    <h2 style="color: #f8b4a6;">¡Hola {first_name}!</h2>
-                    <p>Recibimos una solicitud para restablecer tu contraseña en Centra Kinesiología.</p>
-                    <p>Ingresa el siguiente código de 6 dígitos en la pantalla para cambiar tu contraseña. <strong>Este código es válido por 2 minutos.</strong></p>
-                    <div style="background-color: #fdf2f0; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
-                        <p style="font-size: 24px; font-weight: bold; letter-spacing: 4px; margin: 0; color: #f8b4a6;">
-                            {token}
+                <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.7; color: #3d312a; background-color: #faf7f2; padding: 40px 20px; margin: 0;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; border: 1px solid #c7e0d4; padding: 40px; box-shadow: 0 4px 12px rgba(74, 107, 83, 0.05);">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <span style="font-size: 40px;">🔑</span>
+                            <h2 style="color: #4a6b53; font-family: Georgia, serif; font-size: 28px; margin-top: 10px; margin-bottom: 0;">BioYoga Consciente</h2>
+                        </div>
+                        <h3 style="color: #3d312a; font-family: Georgia, serif; font-size: 20px; margin-top: 0;">¡Hola, {first_name}!</h3>
+                        <p style="font-size: 16px;">
+                            Recibimos una solicitud para restablecer la contraseña de tu cuenta en la plataforma de BioYoga Consciente.
+                        </p>
+                        <p style="font-size: 15px; margin-bottom: 20px;">
+                            Ingresa el siguiente código de 6 dígitos en la pantalla de verificación para restablecer tu acceso. <strong>Este código es válido únicamente por 2 minutos:</strong>
+                        </p>
+                        <div style="background-color: #faf7f2; border: 1px solid #c7e0d4; border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center;">
+                            <p style="font-size: 32px; font-weight: bold; letter-spacing: 6px; margin: 0; color: #4a6b53;">
+                                {token}
+                            </p>
+                        </div>
+                        <p style="font-size: 14px; color: #7c6c62;">
+                            Si no realizaste esta solicitud, puedes ignorar este correo tranquilamente; tu contraseña seguirá siendo la misma.
+                        </p>
+                        <hr style="border: 0; border-top: 1px solid #c7e0d4; margin: 30px 0;" />
+                        <p style="font-size: 14px; color: #7c6c62; margin-bottom: 0;">
+                            Saludos cordiales,<br />
+                            <strong>El equipo de BioYoga Consciente</strong>
                         </p>
                     </div>
-                    <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
-                    <br>
-                    <p>Saludos,<br>El equipo de Centra</p>
                 </body>
             </html>
         """
@@ -141,19 +187,19 @@ async def send_expiration_email(student_email: str, course_title: str):
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
         "to": [
             {"email": "amurrayroppel@gmail.com", "name": "Andrés Murray"},
-            {"email": "centraformaciones@gmail.com", "name": "Centra Formaciones"}
+            {"email": "bioyogaconsciente@gmail.com", "name": "BioYoga Consciente"}
         ],
         "subject": f"Acceso Finalizado: {student_email} - {course_title}",
         "htmlContent": f"""
             <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #4a3f35;">
-                    <h2 style="color: #d9534f;">Aviso de finalización de acceso</h2>
-                    <p>Al alumno <strong>{student_email}</strong> se le terminó el acceso al curso <strong>{course_title}</strong>.</p>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #3d312a;">
+                    <h2 style="color: #d9534f;">Aviso de finalización de acceso - BioYoga</h2>
+                    <p>Al alumno <strong>{student_email}</strong> se le ha terminado el tiempo de acceso configurado para el curso <strong>{course_title}</strong>.</p>
                     <p style="font-weight: bold; color: #d9534f; font-size: 16px;">
-                        No olvides sacarle el acceso de la carpeta de drive.
+                        Por favor, retira el acceso de la carpeta de Drive si corresponde.
                     </p>
                     <br>
-                    <p>Saludos,<br>Sistema Centra Kinesiología</p>
+                    <p>Saludos,<br>Sistema BioYoga Consciente</p>
                 </body>
             </html>
         """

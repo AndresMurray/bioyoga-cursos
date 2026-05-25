@@ -40,7 +40,7 @@ if is_configured():
     )
 
 
-async def upload_image(file: UploadFile, folder: str = "centra/images") -> str:
+async def upload_image(file: UploadFile, folder: str = "bioyoga/images") -> str:
     """
     Sube una imagen a Cloudinary y retorna la URL segura.
     Args:
@@ -60,7 +60,7 @@ async def upload_image(file: UploadFile, folder: str = "centra/images") -> str:
     return result["secure_url"]
 
 
-async def upload_pdf(file: UploadFile, folder: str = "centra/pdfs") -> str:
+async def upload_pdf(file: UploadFile, folder: str = "bioyoga/pdfs") -> str:
     """
     Sube un PDF a Cloudinary y retorna la URL segura.
     """

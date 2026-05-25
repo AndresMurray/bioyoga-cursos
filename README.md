@@ -1,6 +1,6 @@
-# Centra - Gestión de Cursos
+# BioYoga - Gestión de Cursos
 
-Este es un sistema web para la gestión de cursos de **Centra - Kinesiología**.
+Este es un sistema web para la gestión de cursos de **BioYoga - Consciente**.
 
 ## Estructura del Proyecto
 

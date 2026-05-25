@@ -69,4 +69,57 @@
     width: 100%;
     opacity: 0.15;
   }
+
+  /* Gentle floating animation for hero image */
+  .animate-float {
+    animation: gentleFloat 6s ease-in-out infinite;
+  }
+
+  /* Staggered slide-up fade-in for hero content */
+  .animate-slide-up {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .animate-slide-up-delay-1 { animation-delay: 0.15s; }
+  .animate-slide-up-delay-2 { animation-delay: 0.3s; }
+  .animate-slide-up-delay-3 { animation-delay: 0.45s; }
+  .animate-slide-up-delay-4 { animation-delay: 0.6s; }
+
+  /* Decorative organic blob */
+  .hero-blob {
+    position: absolute;
+    border-radius: 42% 58% 62% 38% / 45% 55% 45% 55%;
+    background: linear-gradient(135deg, rgba(139,186,183,0.25) 0%, rgba(183,218,218,0.15) 100%);
+    filter: blur(40px);
+    animation: blobMorph 12s ease-in-out infinite alternate;
+  }
+
+  /* Soft glow pulse for accent elements */
+  .animate-glow-pulse {
+    animation: glowPulse 3s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes slideUpFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blobMorph {
+  0% { border-radius: 42% 58% 62% 38% / 45% 55% 45% 55%; transform: rotate(0deg) scale(1); }
+  50% { border-radius: 55% 45% 38% 62% / 58% 42% 58% 42%; transform: rotate(10deg) scale(1.05); }
+  100% { border-radius: 38% 62% 45% 55% / 42% 58% 42% 58%; transform: rotate(-5deg) scale(0.98); }
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 30px rgba(139,186,183,0.2); }
+  100% { box-shadow: 0 0 50px rgba(139,186,183,0.4); }
 }

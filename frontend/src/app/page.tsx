@@ -51,46 +51,73 @@ export default async function Home() {
       <div className="animate-fade">
         <RedirectIfLoggedIn />
 
-        {/* Hero Section / Presentation */}
-        <section id="sobre-mi" className="py-20 md:py-28 bg-gradient-to-b from-[#faf7f2] to-[#f4efea] flex flex-col items-center">
-          <div className="container max-w-4xl text-center px-4">
-            <h1 className="font-sans text-4xl md:text-6xl font-black leading-tight mb-8 text-[#3d312a] tracking-tight max-w-3xl mx-auto uppercase">
-              {heroData.hero_title}
-            </h1>
+        {/* Hero Section / Presentation — Editorial Split Layout */}
+        <section id="sobre-mi" className="relative py-20 md:py-28 overflow-hidden">
+          {/* Decorative background blobs */}
+          <div className="hero-blob w-[500px] h-[500px] -top-40 -right-40 absolute opacity-60"></div>
+          <div className="hero-blob w-[300px] h-[300px] bottom-10 -left-20 absolute opacity-40" style={{ animationDelay: '-4s' }}></div>
+          
+          <div className="container max-w-6xl mx-auto px-4">
+            <div className="flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16 lg:gap-20">
+              
+              {/* Left: Text Content */}
+              <div className="flex-1 text-center md:text-left">
+                {/* Small decorative accent */}
+                <div className="animate-slide-up flex items-center gap-3 mb-6 justify-center md:justify-start">
+                  <span className="block w-8 h-[3px] rounded-full bg-[#8bbab7]"></span>
+                  <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#6c9e9b]">BioYoga Consciente</span>
+                </div>
+                
+                <h1 className="animate-slide-up animate-slide-up-delay-1 font-sans text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] mb-8 text-[#3d312a] tracking-tight max-w-xl">
+                  {heroData.hero_title}
+                </h1>
 
-            {/* Circular Frame with Offset Shadow */}
-            <div className="relative w-72 h-72 md:w-80 md:h-80 mx-auto mb-10">
-              <div className="zen-circle-frame w-full h-full overflow-hidden border-4 border-white">
-                {(!heroData.hero_image_url || heroData.hero_image_url.trim() === "") ? (
-                  <div className="w-full h-full bg-muted/20 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-accent/5 opacity-50"></div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-primary/70">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                  </div>
-                ) : (
-                  <img
-                    src={heroData.hero_image_url}
-                    alt="Instructora de Yoga"
-                    className="w-full h-full object-cover block"
-                  />
-                )}
+                <p className="animate-slide-up animate-slide-up-delay-2 text-base md:text-lg text-muted-foreground mb-5 leading-relaxed max-w-lg">
+                  {heroData.hero_subtitle_1}
+                </p>
+                <p className="animate-slide-up animate-slide-up-delay-3 text-base md:text-lg text-muted-foreground mb-10 leading-relaxed max-w-lg">
+                  {heroData.hero_subtitle_2}
+                </p>
+
+                <div className="animate-slide-up animate-slide-up-delay-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                  <a href="#cursos">
+                    <Button size="lg" className="rounded-full shadow-lg shadow-primary/30 text-base px-8 py-6 font-semibold bg-primary hover:bg-primary/95 text-white transition-all transform hover:scale-[1.02]">
+                      Ver Cursos y Talleres
+                    </Button>
+                  </a>
+                </div>
               </div>
-            </div>
 
-            <p className="text-base md:text-lg text-muted-foreground mb-6 leading-relaxed max-w-2xl mx-auto">
-              {heroData.hero_subtitle_1}
-            </p>
-            <p className="text-base md:text-lg text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto">
-              {heroData.hero_subtitle_2}
-            </p>
+              {/* Right: Profile Image with Decorative Elements */}
+              <div className="relative flex-shrink-0 flex items-center justify-center">
+                {/* Decorative ring behind the image */}
+                <div className="absolute w-80 h-80 md:w-[22rem] md:h-[22rem] rounded-full border-2 border-dashed border-[#8bbab7]/20 animate-[spin_40s_linear_infinite]"></div>
+                
+                {/* Main floating image container */}
+                <div className="animate-float relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
+                  <div className="zen-circle-frame animate-glow-pulse w-full h-full overflow-hidden border-4 border-white">
+                    {(!heroData.hero_image_url || heroData.hero_image_url.trim() === "") ? (
+                      <div className="w-full h-full bg-muted/20 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-accent/5 opacity-50"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-primary/70">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <img
+                        src={heroData.hero_image_url}
+                        alt="Instructora de Yoga"
+                        className="w-full h-full object-cover block"
+                      />
+                    )}
+                  </div>
 
-            <div className="flex justify-center">
-              <a href="#cursos">
-                <Button size="lg" className="rounded-full shadow-lg shadow-primary/30 text-base px-8 py-6 font-semibold bg-primary hover:bg-primary/95 text-white transition-all transform hover:scale-[1.02]">
-                  Ver Cursos y Talleres
-                </Button>
-              </a>
+                  {/* Decorative small floating dots */}
+                  <div className="absolute -top-4 -right-4 w-3 h-3 rounded-full bg-[#d99b82]/60 animate-float" style={{ animationDelay: '-2s' }}></div>
+                  <div className="absolute -bottom-2 -left-6 w-2 h-2 rounded-full bg-[#8bbab7]/70 animate-float" style={{ animationDelay: '-4s' }}></div>
+                  <div className="absolute top-1/2 -right-8 w-2 h-2 rounded-full bg-[#4a6b53]/40 animate-float" style={{ animationDelay: '-1s' }}></div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
