@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI):
         print(f"Error running database migrations: {e}")
     yield
 
-app = FastAPI(title="Centra Kinesiología - Gestión de Cursos API", lifespan=lifespan)
+app = FastAPI(title="BioYoga Consciente - Gestión de Cursos API", lifespan=lifespan)
 
 
 # Configure CORS
@@ -77,7 +77,7 @@ app.include_router(downloads.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Bienvenido a la API de Gestión de Cursos de Centra"}
+    return {"message": "Bienvenido a la API de Gestión de Cursos de BioYoga"}
 
 @app.get("/health", status_code=status.HTTP_200_OK)
 async def health_check():

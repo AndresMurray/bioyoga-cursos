@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import InstagramBanner from "@/components/common/InstagramBanner";
 
 export const metadata: Metadata = {
   title: "BioYoga Consciente - Cursos y Formaciones de Yoga",
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
+        <InstagramBanner />
         <Navbar />
         <main>{children}</main>
         <Footer />
