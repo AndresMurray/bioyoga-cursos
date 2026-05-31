@@ -49,7 +49,7 @@ const StudentManagement = () => {
             placeholder="Buscar por nombre, email o DNI..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full px-5 py-2.5 pl-11 rounded-full border border-white/60 bg-white/50 backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm font-medium placeholder:text-foreground/45 text-foreground"
+            className="w-full px-5 py-2.5 pl-11 rounded-full border border-border bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm font-medium placeholder:text-foreground/45 text-foreground"
           />
           <svg
             className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60"
@@ -69,18 +69,18 @@ const StudentManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] border border-white/70 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] border border-border overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
-              <tr className="text-xs text-foreground/80 bg-primary/10 border-b border-white/60">
+              <tr className="text-xs text-foreground/80 bg-primary/10 border-b border-border/60">
                 <th className="px-6 py-4.5 font-bold uppercase tracking-wider">Alumno</th>
                 <th className="px-6 py-4.5 font-bold uppercase tracking-wider">DNI</th>
                 <th className="px-6 py-4.5 font-bold uppercase tracking-wider">Cursos Activos</th>
                 <th className="px-6 py-4.5 font-bold uppercase tracking-wider text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/50">
+            <tbody className="divide-y divide-border/50">
               {loading && !studentsData ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-16 text-center text-foreground/60 font-medium italic animate-pulse">
@@ -95,7 +95,7 @@ const StudentManagement = () => {
                 </tr>
               ) : (
                 studentsData?.items.map((student) => (
-                  <tr key={student.id} className="hover:bg-white/45 transition-colors duration-200">
+                  <tr key={student.id} className="hover:bg-primary/5 transition-colors duration-200">
                     <td className="px-6 py-5">
                       <div className="font-bold text-foreground text-base">{student.first_name} {student.last_name}</div>
                       <div className="text-foreground/60 text-xs mt-0.5">{student.email}</div>

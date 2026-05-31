@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useCourses, Course } from '@/hooks/useCourses';
 import { Student } from '@/hooks/useStudents';
 import { Button } from '@/components/ui/Button';
@@ -42,10 +43,15 @@ const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ student, onClose, onE
     return student.active_courses.some(c => c.id === courseId);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm animate-fade">
-      <div className="w-full max-w-2xl bg-white/80 backdrop-blur-md rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] border border-white/85 p-8 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="pb-6 border-b border-white/60 flex justify-between items-center">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="w-full max-w-2xl bg-white rounded-[2.5rem] rounded-tr-[0.75rem] rounded-bl-[0.75rem] border border-border p-8 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade">
+        <div className="pb-6 border-b border-border/60 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-bold font-serif text-foreground">Gestionar Accesos</h2>
             <p className="text-foreground/75 font-medium text-sm mt-0.5">{student.first_name} {student.last_name} ({student.email})</p>
@@ -66,7 +72,7 @@ const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ student, onClose, onE
                 const enrolled = isEnrolled(course.id);
                 return (
                   <div key={course.id} className={`p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
-                    enrolled ? 'bg-primary/10 border-primary/20 shadow-sm' : 'bg-white/40 border-white/60'
+                    enrolled ? 'bg-primary/10 border-primary/20 shadow-sm' : 'bg-accent/50 border-border/60'
                   }`}>
                     <div>
                       <div className="font-bold text-foreground text-base flex items-center gap-2 flex-wrap">
@@ -99,11 +105,12 @@ const EnrollmentModal: React.FC<EnrollmentModalProps> = ({ student, onClose, onE
           )}
         </div>
 
-        <div className="pt-6 border-t border-white/60 flex justify-end">
+        <div className="pt-6 border-t border-border/60 flex justify-end">
           <Button variant="outline" onClick={onClose} className="rounded-full px-6 py-2 h-auto text-xs font-bold">Cerrar</Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

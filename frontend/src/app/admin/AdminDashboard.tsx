@@ -128,13 +128,13 @@ const AdminDashboard = () => {
 
 
         {/* Floating Glassmorphic Tabs Toolbar */}
-        <div className="bg-white/40 border border-white/60 p-2 rounded-2xl md:rounded-full flex flex-col md:flex-row gap-2 w-full md:w-fit mb-12 shadow-sm backdrop-blur-md">
+        <div className="bg-white border border-border p-2 rounded-2xl md:rounded-full flex flex-col md:flex-row gap-2 w-full md:w-fit mb-12 shadow-sm">
           <button 
             onClick={() => setActiveTab('courses')}
             className={`flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl md:rounded-full font-bold text-sm transition-all duration-300 ${
               activeTab === 'courses' 
                 ? 'bg-primary text-white shadow-sm scale-102 md:scale-105' 
-                : 'text-foreground/80 hover:text-primary hover:bg-white/40'
+                : 'text-foreground/80 hover:text-primary hover:bg-primary/5'
             }`}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
             className={`flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl md:rounded-full font-bold text-sm transition-all duration-300 ${
               activeTab === 'home_config' 
                 ? 'bg-primary text-white shadow-sm scale-102 md:scale-105' 
-                : 'text-foreground/80 hover:text-primary hover:bg-white/40'
+                : 'text-foreground/80 hover:text-primary hover:bg-primary/5'
             }`}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -160,7 +160,7 @@ const AdminDashboard = () => {
             className={`flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl md:rounded-full font-bold text-sm transition-all duration-300 ${
               activeTab === 'users' 
                 ? 'bg-primary text-white shadow-sm scale-102 md:scale-105' 
-                : 'text-foreground/80 hover:text-primary hover:bg-white/40'
+                : 'text-foreground/80 hover:text-primary hover:bg-primary/5'
             }`}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

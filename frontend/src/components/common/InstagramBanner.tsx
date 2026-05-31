@@ -1,9 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 const InstagramBanner = () => {
+  const pathname = usePathname();
   const [dismissed, setDismissed] = useState(false);
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   if (dismissed) return null;
 
