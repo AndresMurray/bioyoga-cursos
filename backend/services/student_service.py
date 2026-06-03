@@ -70,6 +70,7 @@ class StudentService:
             enrollment = self.enrollment_repo.create(enrollment_data)
 
         # Send enrollment notification email (non-blocking)
+        #
         user = self.user_repo.get_by_id(user_id)
         if user:
             try:
