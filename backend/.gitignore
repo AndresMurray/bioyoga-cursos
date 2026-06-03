@@ -41,3 +41,6 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Local guides
+MIGRATIONS.md

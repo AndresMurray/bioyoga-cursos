@@ -41,18 +41,26 @@ def check_and_create_database():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Auto bootstrap target database if not exists
-    check_and_create_database()
-    
-    # Run database migrations on startup
-    try:
-        print("Running database migrations...")
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        alembic_cfg = Config(os.path.join(current_dir, "alembic.ini"))
-        command.upgrade(alembic_cfg, "head")
-        print("Database migrations applied successfully!")
-    except Exception as e:
-        print(f"Error running database migrations: {e}")
+    # Only bootstrap and migrate if running locally
+    from database.session import DATABASE_URL
+    is_local = "localhost" in DATABASE_URL or "127.0.0.1" in DATABASE_URL
+    is_vercel = os.getenv("VERCEL") == "1"
+
+    if is_local and not is_vercel:
+        # Auto bootstrap target database if not exists
+        check_and_create_database()
+        
+        # Run database migrations on startup
+        try:
+            print("Running database migrations locally...")
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            alembic_cfg = Config(os.path.join(current_dir, "alembic.ini"))
+            command.upgrade(alembic_cfg, "head")
+            print("Database migrations applied successfully!")
+        except Exception as e:
+            print(f"Error running database migrations: {e}")
+    else:
+        print("Running in remote environment (Vercel/Supabase). Skipping automatic migrations.")
     yield
 
 app = FastAPI(title="BioYoga Consciente - Gestión de Cursos API", lifespan=lifespan)
