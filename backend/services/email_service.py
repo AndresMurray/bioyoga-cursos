@@ -187,7 +187,7 @@ async def send_expiration_email(student_email: str, course_title: str):
         "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
         "to": [
             {"email": "amurrayroppel@gmail.com", "name": "Andrés Murray"},
-            {"email": "bioyogaconsciente@gmail.com", "name": "BioYoga Consciente"}
+            {"email": "bioyogasistema@gmail.com", "name": "BioYoga Consciente"}
         ],
         "subject": f"Acceso Finalizado: {student_email} - {course_title}",
         "htmlContent": f"""
