@@ -89,9 +89,16 @@ const Footer = () => {
           paddingTop: '2.5rem',
           textAlign: 'center',
           color: '#c5d5cb',
-          fontSize: '0.85rem'
+          fontSize: '0.85rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          alignItems: 'center'
         }}>
-          © {new Date().getFullYear()} BioYoga Consciente. Todos los derechos reservados.
+          <span>© {new Date().getFullYear()} BioYoga Consciente. Todos los derechos reservados.</span>
+          <span style={{ fontSize: '0.8rem', color: '#a3bdae' }}>
+            Desarrollado por <strong style={{ color: '#faf7f2' }}>Andrés Murray Roppel</strong> | Contacto: <a href="mailto:amurrayroppel@gmail.com" style={{ textDecoration: 'underline', color: '#8bbab7' }} className="hover:text-white transition-colors">amurrayroppel@gmail.com</a>
+          </span>
         </div>
       </div>
     </footer>
