@@ -1,3 +1,5 @@
+import hashlib
+import time
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from typing import List
 from dependencies import require_admin
@@ -8,6 +10,43 @@ router = APIRouter(
     tags=["Uploads"],
     dependencies=[Depends(require_admin)]
 )
+
+
+@router.get("/sign")
+async def sign_upload(resource_type: str = "raw", folder: str = "centra/pdfs"):
+    """
+    Genera una firma SHA-256 para que el browser pueda subir archivos
+    directamente a Cloudinary sin pasar por Vercel.
+
+    El api_secret NUNCA sale del servidor — solo se usa para firmar.
+    El api_key y cloud_name son públicos por diseño en Cloudinary.
+
+    Parámetros:
+      - resource_type: 'raw' para PDFs, 'image' para imágenes
+      - folder: carpeta destino en Cloudinary (ej: 'centra/pdfs')
+    """
+    if not cloudinary_service.is_configured():
+        raise HTTPException(
+            status_code=500,
+            detail="Cloudinary no está configurado en el servidor."
+        )
+
+    ts = int(time.time())
+
+    # Los parámetros DEBEN estar ordenados alfabéticamente para la firma de Cloudinary
+    params_to_sign = f"folder={folder}&timestamp={ts}"
+
+    # Cloudinary usa SHA-256 puro: params_ordenados + api_secret
+    to_hash = f"{params_to_sign}{cloudinary_service.CLOUDINARY_API_SECRET}"
+    signature = hashlib.sha256(to_hash.encode("utf-8")).hexdigest()
+
+    return {
+        "signature": signature,
+        "timestamp": ts,
+        "api_key": cloudinary_service.CLOUDINARY_API_KEY,
+        "cloud_name": cloudinary_service.CLOUDINARY_CLOUD_NAME,
+    }
+
 
 # ── Tipos permitidos ──────────────────────────────
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}

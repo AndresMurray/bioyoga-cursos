@@ -10,6 +10,7 @@ import { ImageCropper, validateImageFile, ALLOWED_IMAGE_EXTENSIONS, ALLOWED_IMAG
 
 import { api } from '@/lib/api';
 import { downloadPdf } from '@/utils/downloadPdf';
+import { uploadFileToCloudinary, uploadPdfsToCloudinary } from '@/utils/uploadToCloudinary';
 
 
 interface LessonFormProps {
@@ -35,7 +36,9 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
   const [existingPdfs, setExistingPdfs] = useState<LessonPdf[]>([]);
   
   const [error, setError] = useState('');
+  const [pdfError, setPdfError] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     if (lesson) {
@@ -100,10 +103,22 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
     }
   };
 
+  const MAX_PDF_SIZE_MB = 10;
+  const MAX_PDF_SIZE_BYTES = MAX_PDF_SIZE_MB * 1024 * 1024;
+
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setPdfFiles(Array.from(e.target.files));
+    if (!e.target.files) return;
+    const selected = Array.from(e.target.files);
+    const oversized = selected.filter(f => f.size > MAX_PDF_SIZE_BYTES);
+    if (oversized.length > 0) {
+      const names = oversized.map(f => `"${f.name}" (${(f.size / 1024 / 1024).toFixed(1)} MB)`).join(', ');
+      setPdfError(`${oversized.length > 1 ? 'Los archivos' : 'El archivo'} ${names} ${oversized.length > 1 ? 'superan' : 'supera'} el límite de ${MAX_PDF_SIZE_MB} MB por archivo.`);
+      e.target.value = '';
+      setPdfFiles([]);
+      return;
     }
+    setPdfError('');
+    setPdfFiles(selected);
   };
 
   const removeExistingPdf = (index: number) => {
@@ -122,26 +137,26 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
     }
 
     setIsUploading(true);
+    setUploadProgress(0);
     let finalImageUrl = existingImageUrl;
 
     try {
-      // Upload cropped cover image
+      // Subida directa a Cloudinary desde el browser (sin pasar por Vercel)
       if (croppedImage) {
-        const uploadData = new FormData();
-        uploadData.append('file', croppedImage.blob, 'portada_clase.jpg');
-        const response = await api.upload('/uploads/image', uploadData);
-        finalImageUrl = response.url;
+        const imageFile = new File([croppedImage.blob], 'portada_clase.jpg', { type: 'image/jpeg' });
+        finalImageUrl = await uploadFileToCloudinary(
+          imageFile,
+          'image',
+          'centra/images',
+          setUploadProgress
+        );
       }
 
-      // Upload PDFs
+      // Upload PDFs directo a Cloudinary (sin límite de tamaño ni timeout de Vercel)
       let newPdfs: LessonPdf[] = [];
       if (pdfFiles.length > 0) {
-        const uploadData = new FormData();
-        pdfFiles.forEach(file => {
-          uploadData.append('files', file);
-        });
-        const response = await api.upload('/uploads/pdf', uploadData);
-        newPdfs = response.urls.map((url: string, i: number) => ({
+        const pdfUrls = await uploadPdfsToCloudinary(pdfFiles, setUploadProgress);
+        newPdfs = pdfUrls.map((url: string, i: number) => ({
           title: pdfFiles[i]?.name?.replace('.pdf', '') || `Documento ${i + 1}`,
           url,
         }));
@@ -261,9 +276,33 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
               multiple
               onChange={handlePdfChange}
             />
-            {pdfFiles.length > 0 && (
-              <p className="text-xs text-primary">{pdfFiles.length} archivo(s) seleccionado(s) listos para subir.</p>
+            {pdfError && (
+              <div className="text-xs bg-red-50 border border-red-200 rounded-md px-3 py-2 flex flex-col gap-1">
+                <p className="text-red-600 font-medium">⚠️ {pdfError}</p>
+                <p className="text-red-500">
+                  Podés comprimir el PDF con una herramienta gratuita como{' '}
+                  <a
+                    href="https://www.ilovepdf.com/es/comprimir_pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline font-medium hover:text-red-700"
+                  >
+                    ilovepdf.com
+                  </a>
+                  {' '}e intentar subirlo nuevamente.
+                </p>
+              </div>
             )}
+            {pdfFiles.length > 0 && (
+              <ul className="text-xs text-primary space-y-0.5">
+                {pdfFiles.map((f, i) => (
+                  <li key={i}>
+                    ✓ {f.name} <span className="text-muted-foreground">({(f.size / 1024 / 1024).toFixed(1)} MB)</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="text-xs text-muted-foreground">Solo PDF. Máx. {MAX_PDF_SIZE_MB} MB por archivo.</p>
           </div>
 
           {existingPdfs.length > 0 && (
@@ -299,7 +338,15 @@ export default function LessonForm({ lesson, onSubmit, onCancel, isLoading }: Le
               Cancelar
             </Button>
             <Button type="submit" disabled={isWorking}>
-              {isUploading ? 'Subiendo archivos...' : isLoading ? 'Guardando...' : lesson ? 'Guardar Cambios' : 'Crear Clase'}
+              {isUploading
+                ? uploadProgress > 0
+                  ? `Subiendo... ${uploadProgress}%`
+                  : 'Preparando subida...'
+                : isLoading
+                ? 'Guardando...'
+                : lesson
+                ? 'Guardar Cambios'
+                : 'Crear Clase'}
             </Button>
           </div>
         </form>
