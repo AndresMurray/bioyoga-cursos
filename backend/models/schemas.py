@@ -163,6 +163,9 @@ class HomeConfigBase(BaseModel):
     hero_subtitle_2: str
     hero_image_url: str
     whatsapp_number: str
+    courses_title: str
+    courses_subtitle: str
+    footer_description: str
 
 class HomeConfigUpdate(BaseModel):
     hero_title: Optional[str] = None
@@ -170,6 +173,9 @@ class HomeConfigUpdate(BaseModel):
     hero_subtitle_2: Optional[str] = None
     hero_image_url: Optional[str] = None
     whatsapp_number: Optional[str] = None
+    courses_title: Optional[str] = None
+    courses_subtitle: Optional[str] = None
+    footer_description: Optional[str] = None
 
 class HomeConfigResponse(HomeConfigBase):
     id: int

@@ -1,6 +1,21 @@
 import React from 'react';
 
-const Footer = () => {
+async function getHomeConfig() {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const res = await fetch(`${apiUrl}/home-config`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching footer config:', error);
+    return null;
+  }
+}
+
+const Footer = async () => {
+  const homeConfig = await getHomeConfig();
+  const footerDesc = homeConfig?.footer_description || "Espacio dedicado a la formación profesional en yoga, meditación y bienestar consciente.";
+
   return (
     <footer style={{
       backgroundColor: '#2e4234', /* Warm Pine Forest Green */
@@ -28,7 +43,7 @@ const Footer = () => {
               <span className="font-sans text-2xl font-bold tracking-tight text-[#faf7f2]">BioYoga</span>
             </div>
             <p style={{ color: '#c5d5cb', fontSize: '0.9rem', lineHeight: '1.6' }}>
-              Espacio dedicado a la formación profesional en yoga, meditación y bienestar consciente.
+              {footerDesc}
             </p>
           </div>
           

@@ -42,7 +42,9 @@ export default async function Home() {
     hero_subtitle_1: "",
     hero_subtitle_2: "",
     hero_image_url: "",
-    whatsapp_number: ""
+    whatsapp_number: "",
+    courses_title: "Nuestros Cursos y Talleres",
+    courses_subtitle: "Capacitaciones diseñadas para profundizar tu práctica personal y potenciar tu camino en el mundo del yoga y el bienestar."
   };
 
   return (
@@ -127,9 +129,11 @@ export default async function Home() {
           <div className="container">
             <div className="text-center mb-16 max-w-2xl mx-auto">
               <div className="lotus-divider mb-8"></div>
-              <h2 className="text-4xl font-black mb-4 text-[#3d312a] uppercase tracking-tight">Nuestros Cursos y Talleres</h2>
+              <h2 className="text-4xl font-black mb-4 text-[#3d312a] uppercase tracking-tight">
+                {heroData.courses_title || "Nuestros Cursos y Talleres"}
+              </h2>
               <p className="text-lg text-muted-foreground">
-                Capacitaciones diseñadas para profundizar tu práctica personal y potenciar tu camino en el mundo del yoga y el bienestar.
+                {heroData.courses_subtitle || "Capacitaciones diseñadas para profundizar tu práctica personal y potenciar tu camino en el mundo del yoga y el bienestar."}
               </p>
             </div>
 

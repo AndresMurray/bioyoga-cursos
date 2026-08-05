@@ -15,7 +15,10 @@ export default function HomeConfigForm() {
     hero_subtitle_1: '',
     hero_subtitle_2: '',
     hero_image_url: '',
-    whatsapp_number: ''
+    whatsapp_number: '',
+    courses_title: '',
+    courses_subtitle: '',
+    footer_description: ''
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -40,7 +43,10 @@ export default function HomeConfigForm() {
         hero_subtitle_1: config.hero_subtitle_1,
         hero_subtitle_2: config.hero_subtitle_2,
         hero_image_url: config.hero_image_url,
-        whatsapp_number: config.whatsapp_number
+        whatsapp_number: config.whatsapp_number,
+        courses_title: config.courses_title || '',
+        courses_subtitle: config.courses_subtitle || '',
+        footer_description: config.footer_description || ''
       });
       setImagePreview(config.hero_image_url);
     }
@@ -238,6 +244,48 @@ export default function HomeConfigForm() {
           <p className="text-xs text-foreground/50 mt-1.5 leading-relaxed">
             Este número alimentará el botón de contacto directo de WhatsApp para los alumnos.
           </p>
+        </div>
+
+        <div className="pt-6 border-t border-white/60 mt-6">
+          <h3 className="text-lg font-bold font-serif mb-4 text-foreground">Sección de Cursos y Talleres</h3>
+          <Input 
+            label="Título de la Sección"
+            name="courses_title"
+            value={formData.courses_title}
+            onChange={handleChange}
+            required
+            className="bg-white/60 backdrop-blur-sm border-white/60 rounded-xl focus:ring-primary/20 focus:border-primary mb-4"
+          />
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold text-foreground/80">
+              Descripción de la Sección
+            </label>
+            <textarea
+              name="courses_subtitle"
+              value={formData.courses_subtitle}
+              onChange={handleChange}
+              className="w-full rounded-2xl border border-white/60 bg-white/60 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all min-h-[100px] leading-relaxed text-foreground"
+              placeholder="Descripción de la sección de cursos..."
+              required
+            />
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-white/60 mt-6">
+          <h3 className="text-lg font-bold font-serif mb-4 text-foreground">Pie de Página (Footer)</h3>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold text-foreground/80">
+              Descripción en el Footer
+            </label>
+            <textarea
+              name="footer_description"
+              value={formData.footer_description}
+              onChange={handleChange}
+              className="w-full rounded-2xl border border-white/60 bg-white/60 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all min-h-[100px] leading-relaxed text-foreground"
+              placeholder="Descripción corta sobre el espacio..."
+              required
+            />
+          </div>
         </div>
 
         <div className="flex justify-end pt-6 border-t border-white/60">
