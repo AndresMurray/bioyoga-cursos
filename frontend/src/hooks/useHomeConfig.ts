@@ -8,6 +8,11 @@ export interface HomeConfig {
   hero_subtitle_2: string;
   hero_image_url: string;
   whatsapp_number: string;
+  courses_title?: string;
+  courses_subtitle?: string;
+  footer_description?: string;
+  informative_title?: string;
+  informative_subtitle?: string;
 }
 
 export function useHomeConfig() {
