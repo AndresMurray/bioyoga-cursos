@@ -1,3 +1,4 @@
+// Trigger rebuild deployment
 import React from 'react';
 import CourseCard from '@/components/courses/CourseCard';
 import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
