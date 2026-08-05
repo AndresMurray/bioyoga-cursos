@@ -16,21 +16,21 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-4 z-40 w-[calc(100%-2rem)] max-w-6xl mx-auto rounded-full border border-white/50 bg-white/40 backdrop-blur-lg shadow-md px-6 transition-all duration-300">
+      <nav className="sticky top-4 z-40 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-6xl mx-auto rounded-full border border-white/50 bg-white/40 backdrop-blur-lg shadow-md px-3 sm:px-6 transition-all duration-300">
         <div className="flex h-16 items-center justify-between w-full">
-          <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
+          <Link href="/" className="flex items-center hover:opacity-90 transition-opacity shrink-0">
             <img 
               src="/logo-sin-fondo.png" 
               alt="BioYoga Consciente" 
-              className="h-12 w-12 mr-2 object-contain" 
+              className="h-9 w-9 sm:h-12 sm:w-12 mr-1 sm:mr-2 object-contain" 
             />
-            <span className="font-sans text-2xl font-light text-[#3d312a] flex flex-col sm:flex-row sm:items-baseline leading-none">
+            <span className="font-sans text-lg sm:text-2xl font-light text-[#3d312a] flex flex-col sm:flex-row sm:items-baseline leading-none">
               <span className="font-extrabold tracking-tight text-[#3d312a]">BioYoga</span>
-              <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] font-bold text-[#6c9e9b] sm:ml-2 mt-0.5 sm:mt-0">Consciente</span>
+              <span className="text-[9px] sm:text-xs uppercase tracking-[0.25em] font-bold text-[#6c9e9b] sm:ml-2 mt-0.5 sm:mt-0 hidden min-[375px]:inline-block">Consciente</span>
             </span>
           </Link>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
             <div className="hidden md:flex items-center gap-6 text-sm font-medium">
               {/* Show common links if not logged in */}
               {!user && (
@@ -51,21 +51,21 @@ const Navbar = () => {
               )}
             </div>
             
-            <div className="flex items-center gap-3 border-l border-border pl-6 ml-2">
+            <div className="flex items-center gap-1.5 sm:gap-3 sm:border-l sm:border-border sm:pl-6">
               {isLoadingUser ? (
-                <div className="w-24 h-8 animate-pulse bg-muted rounded-lg"></div>
+                <div className="w-20 sm:w-24 h-8 animate-pulse bg-muted rounded-lg"></div>
               ) : user ? (
                 <>
-                  <span className="text-sm font-medium text-foreground hidden sm:inline-block">
+                  <span className="text-xs sm:text-sm font-medium text-foreground hidden sm:inline-block">
                     Hola, {user.first_name}
                   </span>
                   <Button 
                     variant="outline"
                     size="sm"
                     onClick={handleLogout}
-                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 text-xs sm:text-sm px-2.5 py-1 sm:px-4 sm:py-2 h-auto"
                   >
-                    Cerrar Sesión
+                    Salir
                   </Button>
                 </>
               ) : (
@@ -74,11 +74,12 @@ const Navbar = () => {
                     variant="ghost" 
                     size="sm"
                     onClick={() => setAuthModal(true)}
+                    className="text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-2 h-auto"
                   >
-                    Iniciar Sesión
+                    Ingresar
                   </Button>
                   <Link href="/register">
-                    <Button size="sm">Registrarse</Button>
+                    <Button size="sm" className="text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-2 h-auto">Registrarse</Button>
                   </Link>
                 </>
               )}
