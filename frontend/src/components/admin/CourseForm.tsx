@@ -36,6 +36,7 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
     price: 0,
     discount_percentage: 0,
     is_visible: false,
+    is_informative: false,
   });
   
   // Unified image list
@@ -58,6 +59,7 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
         price: course.price || 0,
         discount_percentage: course.discount_percentage || 0,
         is_visible: course.is_visible || false,
+        is_informative: course.is_informative || false,
       });
       if (course.images && course.images.length > 0) {
         // Sort by order before setting to state
@@ -171,7 +173,7 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
       setError('El título es obligatorio.');
       return;
     }
-    if (formData.duracion_dias < 1) {
+    if (!formData.is_informative && formData.duracion_dias < 1) {
       setError('La duración debe ser al menos 1 día.');
       return;
     }
@@ -203,7 +205,18 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
         is_cover: img.is_cover || false,
       }));
 
-      const result = await onSubmit({ ...formData, images: allImages } as any);
+      const dataToSubmit = {
+        ...formData,
+        ...(formData.is_informative ? {
+          duracion_dias: 30,
+          price: 0,
+          discount_percentage: 0,
+          link_pago: '',
+        } : {}),
+        images: allImages,
+      };
+
+      const result = await onSubmit(dataToSubmit as any);
       if (!result) {
         setError('Ocurrió un error al guardar el curso.');
       } else {
@@ -331,44 +344,61 @@ export default function CourseForm({ course, onSubmit, onCancel, isLoading }: Co
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-            <Input
-              label="Duración (días de acceso) *"
-              type="number"
-              name="duracion_dias"
-              value={formData.duracion_dias}
-              onChange={handleChange}
-              min={1}
-              required
-            />
+          {!formData.is_informative && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2 animate-fade">
+              <Input
+                label="Duración (días de acceso) *"
+                type="number"
+                name="duracion_dias"
+                value={formData.duracion_dias}
+                onChange={handleChange}
+                min={1}
+                required={!formData.is_informative}
+              />
 
-            <Input
-              label="Link de Pago (Mercado Pago)"
-              name="link_pago"
-              value={formData.link_pago}
+              <Input
+                label="Link de Pago (Mercado Pago)"
+                name="link_pago"
+                value={formData.link_pago}
+                onChange={handleChange}
+                placeholder="https://www.mercadopago.com.ar/..."
+              />
+              
+              <Input
+                label="Precio (ARS) *"
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                min={0}
+                required={!formData.is_informative}
+              />
+              
+              <Input
+                label="Descuento (%)"
+                type="number"
+                name="discount_percentage"
+                value={formData.discount_percentage}
+                onChange={handleChange}
+                min={0}
+                max={100}
+              />
+            </div>
+          )}
+
+          <div className="flex items-center gap-3 py-2 border-t border-border pt-4">
+            <input
+              type="checkbox"
+              name="is_informative"
+              checked={formData.is_informative}
               onChange={handleChange}
-              placeholder="https://www.mercadopago.com.ar/..."
+              id="is_informative"
+              className="w-5 h-5 accent-primary cursor-pointer rounded border-border"
             />
-            
-            <Input
-              label="Precio (ARS) *"
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              min={0}
-              required
-            />
-            
-            <Input
-              label="Descuento (%)"
-              type="number"
-              name="discount_percentage"
-              value={formData.discount_percentage}
-              onChange={handleChange}
-              min={0}
-              max={100}
-            />
+            <label htmlFor="is_informative" className="text-sm font-medium text-foreground cursor-pointer flex flex-col">
+              <span className="font-bold">Marcar como contenido informativo (no comprable)</span>
+              <span className="text-xs text-muted-foreground">Si está marcado, no requerirá link de pago ni precio y no mostrará el botón de compra. Útil para clases presenciales, horarios, etc.</span>
+            </label>
           </div>
 
           <div className="flex items-center gap-3 py-2">

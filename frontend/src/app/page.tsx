@@ -36,6 +36,9 @@ export default async function Home() {
     getHomeConfig()
   ]);
 
+  const informativeCourses = courses.filter(c => c.is_informative);
+  const buyableCourses = courses.filter(c => !c.is_informative);
+
   // Fallback values in case config is not yet set
   const heroData = homeConfig || {
     hero_title: "",
@@ -44,7 +47,9 @@ export default async function Home() {
     hero_image_url: "",
     whatsapp_number: "",
     courses_title: "Nuestros Cursos y Talleres",
-    courses_subtitle: "Capacitaciones diseñadas para profundizar tu práctica personal y potenciar tu camino en el mundo del yoga y el bienestar."
+    courses_subtitle: "Capacitaciones diseñadas para profundizar tu práctica personal y potenciar tu camino en el mundo del yoga y el bienestar.",
+    informative_title: "Clases Presenciales y Actividades",
+    informative_subtitle: "Conocé nuestros horarios, talleres especiales y la oferta de clases presenciales en nuestro espacio."
   };
 
   return (
@@ -124,6 +129,29 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* Informative / Classes Section */}
+        {informativeCourses.length > 0 && (
+          <section id="actividades" className="py-24 bg-[#fbfaf7] border-b border-[#f0eae1]">
+            <div className="container">
+              <div className="text-center mb-16 max-w-2xl mx-auto">
+                <div className="lotus-divider mb-8"></div>
+                <h2 className="text-4xl font-black mb-4 text-[#3d312a] uppercase tracking-tight">
+                  {heroData.informative_title || "Clases Presenciales y Actividades"}
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  {heroData.informative_subtitle || "Conocé nuestros horarios, talleres especiales y la oferta de clases presenciales en nuestro espacio."}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {informativeCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Courses Section */}
         <section id="cursos" className="py-24 bg-[#faf7f2]">
           <div className="container">
@@ -137,9 +165,9 @@ export default async function Home() {
               </p>
             </div>
 
-            {courses.length > 0 ? (
+            {buyableCourses.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {courses.map((course) => (
+                {buyableCourses.map((course) => (
                   <CourseCard key={course.id} course={course} />
                 ))}
               </div>

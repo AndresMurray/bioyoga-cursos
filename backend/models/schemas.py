@@ -117,6 +117,7 @@ class CourseBase(BaseModel):
     price: int = Field(0, description="Precio en pesos argentinos")
     discount_percentage: int = Field(0, ge=0, le=100, description="Porcentaje de descuento")
     is_visible: bool = False
+    is_informative: bool = False
 
 class CourseCreate(CourseBase):
     pass
@@ -130,6 +131,7 @@ class CourseUpdate(BaseModel):
     price: Optional[int] = None
     discount_percentage: Optional[int] = Field(None, ge=0, le=100)
     is_visible: Optional[bool] = None
+    is_informative: Optional[bool] = None
 
 class CourseResponse(CourseBase):
     id: int
@@ -150,6 +152,7 @@ class CourseListResponse(BaseModel):
     price: int = 0
     discount_percentage: int = 0
     is_visible: bool
+    is_informative: bool = False
     end_date: Optional[datetime] = None
 
     class Config:
@@ -166,6 +169,8 @@ class HomeConfigBase(BaseModel):
     courses_title: str
     courses_subtitle: str
     footer_description: str
+    informative_title: str
+    informative_subtitle: str
 
 class HomeConfigUpdate(BaseModel):
     hero_title: Optional[str] = None
@@ -176,6 +181,8 @@ class HomeConfigUpdate(BaseModel):
     courses_title: Optional[str] = None
     courses_subtitle: Optional[str] = None
     footer_description: Optional[str] = None
+    informative_title: Optional[str] = None
+    informative_subtitle: Optional[str] = None
 
 class HomeConfigResponse(HomeConfigBase):
     id: int

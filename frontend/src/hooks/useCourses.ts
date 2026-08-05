@@ -26,6 +26,7 @@ export interface Course {
   price: number;
   discount_percentage: number;
   is_visible: boolean;
+  is_informative?: boolean;
   lessons?: Lesson[];
 }
 

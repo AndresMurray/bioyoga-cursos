@@ -47,10 +47,15 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
                 🧘‍♀️
               </div>
             )}
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-4 left-4 flex gap-2">
               <Badge variant={course.is_visible ? 'success' : 'secondary'} className="shadow-sm">
                 {course.is_visible ? 'Visible' : 'Oculto'}
               </Badge>
+              {course.is_informative && (
+                <Badge className="bg-[#8bbab7] text-white hover:bg-[#8bbab7]/95 border-none shadow-sm">
+                  Informativo
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -62,27 +67,37 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
               {course.description || 'Sin descripción'}
             </p>
             
-            <div className="flex justify-between items-center mb-5 mt-auto">
-              <span className="text-xs text-foreground/60 font-bold bg-primary/10 px-3 py-1 rounded-full">
-                {course.duracion_dias} días de acceso
-              </span>
-              <PriceDisplay 
-                price={course.price || 0} 
-                discountPercentage={course.discount_percentage || 0} 
-                size="sm" 
-              />
+            <div className="flex justify-between items-center mb-5 mt-auto min-h-[28px]">
+              {course.is_informative ? (
+                <span className="text-xs text-foreground/60 font-bold bg-[#8bbab7]/15 text-[#528a86] px-3 py-1 rounded-full">
+                  Contenido Informativo
+                </span>
+              ) : (
+                <>
+                  <span className="text-xs text-foreground/60 font-bold bg-primary/10 px-3 py-1 rounded-full">
+                    {course.duracion_dias} días de acceso
+                  </span>
+                  <PriceDisplay 
+                    price={course.price || 0} 
+                    discountPercentage={course.discount_percentage || 0} 
+                    size="sm" 
+                  />
+                </>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/60 gap-2">
-              <Link href={`/admin/courses/${course.id}`} className="flex-grow">
-                <Button variant="outline" size="sm" className="w-full h-9 rounded-full text-xs font-bold transition-all">
-                  Clases
-                </Button>
-              </Link>
+              {!course.is_informative && (
+                <Link href={`/admin/courses/${course.id}`} className="flex-grow">
+                  <Button variant="outline" size="sm" className="w-full h-9 rounded-full text-xs font-bold transition-all">
+                    Clases
+                  </Button>
+                </Link>
+              )}
               <Button 
                 variant="secondary" 
                 size="sm" 
-                className="h-9 px-4 rounded-full text-xs font-bold transition-all" 
+                className={`h-9 px-4 rounded-full text-xs font-bold transition-all ${course.is_informative ? 'flex-grow' : ''}`} 
                 onClick={() => onEdit(course)}
               >
                 Editar
@@ -90,7 +105,7 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
               <Button 
                 variant="danger" 
                 size="sm" 
-                className="h-9 px-4 rounded-full text-xs font-bold transition-all" 
+                className={`h-9 px-4 rounded-full text-xs font-bold transition-all ${course.is_informative ? 'flex-grow' : ''}`} 
                 onClick={() => onDelete(course)}
               >
                 Eliminar

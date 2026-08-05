@@ -21,6 +21,7 @@ const AdminDashboard = () => {
   // Modals state
   const [isCourseFormOpen, setIsCourseFormOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [defaultIsInformative, setDefaultIsInformative] = useState(false);
   
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
@@ -45,7 +46,8 @@ const AdminDashboard = () => {
     fetchCourses();
   }, [fetchCourses]);
 
-  const handleOpenCreateForm = () => {
+  const handleOpenCreateForm = (isInformative: boolean = false) => {
+    setDefaultIsInformative(isInformative);
     setEditingCourse(null);
     setIsCourseFormOpen(true);
   };
@@ -140,7 +142,7 @@ const AdminDashboard = () => {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
-            Gestión de Cursos
+            Gestión de Contenidos (Cursos / Info)
           </button>
           <button 
             onClick={() => setActiveTab('home_config')}
@@ -174,10 +176,15 @@ const AdminDashboard = () => {
         {activeTab === 'courses' && (
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-              <h2 className="text-2xl font-bold font-serif text-foreground">Cursos Disponibles</h2>
-              <Button onClick={handleOpenCreateForm} className="shadow-md">
-                + Nuevo Curso
-              </Button>
+              <h2 className="text-2xl font-bold font-serif text-foreground">Contenidos del Espacio</h2>
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" onClick={() => handleOpenCreateForm(true)} className="border-primary text-primary hover:bg-primary/5 rounded-full px-5 py-2 text-xs sm:text-sm h-auto">
+                  + Nuevo Material Informativo
+                </Button>
+                <Button onClick={() => handleOpenCreateForm(false)} className="shadow-md rounded-full px-5 py-2 text-xs sm:text-sm h-auto">
+                  + Nuevo Curso
+                </Button>
+              </div>
             </div>
             
             {loading ? (
@@ -208,7 +215,7 @@ const AdminDashboard = () => {
       {/* Modals */}
       {isCourseFormOpen && (
         <CourseForm 
-          course={editingCourse}
+          course={editingCourse || ({ is_informative: defaultIsInformative } as any)}
           onSubmit={handleSubmitCourse}
           onCancel={() => {
             setIsCourseFormOpen(false);

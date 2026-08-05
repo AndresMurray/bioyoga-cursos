@@ -18,7 +18,9 @@ export default function HomeConfigForm() {
     whatsapp_number: '',
     courses_title: '',
     courses_subtitle: '',
-    footer_description: ''
+    footer_description: '',
+    informative_title: '',
+    informative_subtitle: ''
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -46,7 +48,9 @@ export default function HomeConfigForm() {
         whatsapp_number: config.whatsapp_number,
         courses_title: config.courses_title || '',
         courses_subtitle: config.courses_subtitle || '',
-        footer_description: config.footer_description || ''
+        footer_description: config.footer_description || '',
+        informative_title: config.informative_title || '',
+        informative_subtitle: config.informative_subtitle || ''
       });
       setImagePreview(config.hero_image_url);
     }
@@ -244,6 +248,31 @@ export default function HomeConfigForm() {
           <p className="text-xs text-foreground/50 mt-1.5 leading-relaxed">
             Este número alimentará el botón de contacto directo de WhatsApp para los alumnos.
           </p>
+        </div>
+
+        <div className="pt-6 border-t border-white/60 mt-6">
+          <h3 className="text-lg font-bold font-serif mb-4 text-foreground">Sección Informativa (Clases Presenciales y Actividades)</h3>
+          <Input 
+            label="Título de la Sección Informativa"
+            name="informative_title"
+            value={formData.informative_title}
+            onChange={handleChange}
+            required
+            className="bg-white/60 backdrop-blur-sm border-white/60 rounded-xl focus:ring-primary/20 focus:border-primary mb-4"
+          />
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold text-foreground/80">
+              Descripción de la Sección Informativa
+            </label>
+            <textarea
+              name="informative_subtitle"
+              value={formData.informative_subtitle}
+              onChange={handleChange}
+              className="w-full rounded-2xl border border-white/60 bg-white/60 backdrop-blur-sm px-4 py-3 text-sm placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all min-h-[100px] leading-relaxed text-foreground"
+              placeholder="Descripción de la sección informativa..."
+              required
+            />
+          </div>
         </div>
 
         <div className="pt-6 border-t border-white/60 mt-6">
