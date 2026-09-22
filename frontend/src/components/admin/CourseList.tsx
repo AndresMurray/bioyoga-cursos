@@ -77,11 +77,17 @@ export default function CourseList({ courses, onEdit, onDelete }: CourseListProp
                   <span className="text-xs text-foreground/60 font-bold bg-primary/10 px-3 py-1 rounded-full">
                     {course.duracion_dias} días de acceso
                   </span>
-                  <PriceDisplay 
-                    price={course.price || 0} 
-                    discountPercentage={course.discount_percentage || 0} 
-                    size="sm" 
-                  />
+                  {course.price && course.price > 0 ? (
+                    <PriceDisplay 
+                      price={course.price} 
+                      discountPercentage={course.discount_percentage || 0} 
+                      size="sm" 
+                    />
+                  ) : (
+                    <span className="text-xs text-muted-foreground italic">
+                      Sin precio
+                    </span>
+                  )}
                 </>
               )}
             </div>

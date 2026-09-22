@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/utils/cn';
 
 interface PriceDisplayProps {
-  price: number;
+  price?: number | null;
   discountPercentage?: number;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -14,6 +14,10 @@ export function PriceDisplay({
   className,
   size = 'md',
 }: PriceDisplayProps) {
+  if (!price || price <= 0) {
+    return null;
+  }
+
   // Calcular precio con descuento
   const hasDiscount = discountPercentage > 0 && discountPercentage <= 100;
   const finalPrice = hasDiscount
@@ -48,14 +52,6 @@ export function PriceDisplay({
   };
 
   const styles = sizeClasses[size];
-
-  if (price === 0) {
-    return (
-      <span className={cn("font-bold text-green-500", styles.final, className)}>
-        Gratis
-      </span>
-    );
-  }
 
   return (
     <div className={cn("flex flex-col items-start gap-1", className)}>

@@ -11,6 +11,7 @@ import PurchaseConfirmationModal from '@/components/courses/PurchaseConfirmation
 import { Course } from '@/hooks/useCourses';
 import { useHomeConfig } from '@/hooks/useHomeConfig';
 import { api } from '@/lib/api';
+import { cn } from '@/utils/cn';
 import Link from 'next/link';
 
 interface CourseCardProps {
@@ -23,6 +24,8 @@ const CourseCard = ({ course }: CourseCardProps) => {
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showAlreadyPurchased, setShowAlreadyPurchased] = useState(false);
   const { config, fetchConfig } = useHomeConfig();
+
+  const hasPrice = typeof course.price === 'number' && course.price > 0;
 
   useEffect(() => {
     fetchConfig();
@@ -81,7 +84,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
       >
         <div className="h-48 overflow-hidden relative rounded-t-[2.5rem] rounded-tr-[0.75rem]">
           <img src={coverImage} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-          {course.discount_percentage > 0 && (
+          {hasPrice && course.discount_percentage > 0 && (
             <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
               {course.discount_percentage}% OFF
             </div>
@@ -90,7 +93,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
         <CardContent className="p-6 flex flex-col flex-grow">
           <h3 className="text-xl font-bold mb-4 line-clamp-2 flex-grow text-[#3d312a] group-hover:text-primary transition-colors">{course.title}</h3>
           
-          {!course.is_informative && (
+          {!course.is_informative && hasPrice && (
             <div className="flex justify-between items-center pt-4 border-t border-border mt-auto mb-5">
               <div className="flex flex-col">
                 <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider mb-1">Inversión</span>
@@ -100,7 +103,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
           )}
           
           {course.is_informative ? (
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-auto">
               <Button 
                 variant="secondary" 
                 className="flex-1 bg-accent text-accent-foreground hover:bg-accent/80"
@@ -110,7 +113,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
               </Button>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className={cn("flex gap-3", !hasPrice && "mt-auto")}>
               <Button 
                 variant="secondary" 
                 className="flex-1 bg-accent text-accent-foreground hover:bg-accent/80"
@@ -145,13 +148,21 @@ const CourseCard = ({ course }: CourseCardProps) => {
             {course.description || 'Sin descripción'}
           </p>
           {!course.is_informative && (
-            <div className="flex flex-col sm:flex-row gap-6 items-center bg-muted/50 p-4 rounded-xl">
-              <div className="flex flex-col flex-1 w-full">
-                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider mb-1">Inversión</span>
-                <PriceDisplay price={course.price} discountPercentage={course.discount_percentage} size="lg" />
-              </div>
+            <div className={cn(
+              "flex flex-col sm:flex-row gap-6 items-center p-4 rounded-xl",
+              hasPrice ? "bg-muted/50 justify-between" : "justify-end"
+            )}>
+              {hasPrice && (
+                <div className="flex flex-col flex-1 w-full">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider mb-1">Inversión</span>
+                  <PriceDisplay price={course.price} discountPercentage={course.discount_percentage} size="lg" />
+                </div>
+              )}
               <Button 
-                className="w-full sm:w-auto py-6 px-8 text-base font-bold shadow-lg shadow-primary/30 shrink-0"
+                className={cn(
+                  "text-base font-bold shadow-lg shadow-primary/30 shrink-0",
+                  hasPrice ? "w-full sm:w-auto py-6 px-8" : "w-full py-4"
+                )}
                 onClick={handleBuyClick}
               >
                 Comprar Curso
